@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'; // For Redux state manag
 import { useNavigate } from 'react-router-dom'; // For navigation between routes
 import { updateFailure, updateStart, updateSuccess } from '../redux/user/userSlice'; // Redux actions for user updates
 import { SyncLoader } from 'react-spinners'; // Loading spinner component
-import { countries } from '../Data/Locations'; // List of countries (presumably for a dropdown or selection)
+import { countries } from '../Data/Locations.jsx'; // List of countries (presumably for a dropdown or selection)
 import { motion } from 'framer-motion'; // For animations (potentially for page transitions)
 
 // Main component for Preferences

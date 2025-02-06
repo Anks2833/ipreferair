@@ -1,7 +1,7 @@
 import { LucideMessageSquareWarning } from 'lucide-react'; // Importing an icon for warning messages
 import React, { useEffect, useState } from 'react'; // Importing React and hooks
 import { BounceLoader } from 'react-spinners'; // Importing a loading spinner component
-import { locations } from '../Data/Locations'; // Importing the locations data (presumably a list of places)
+import { locations } from '../Data/Locations.jsx'; // Importing the locations data (presumably a list of places)
 import OriginInput from '../Components/Common/Inputs/OriginInput'; // Importing the Origin Input Component
 import DestinationInput from '../Components/Common/Inputs/DestinationInput'; // Importing the Destination Input Component
 import TravelersInput from '../Components/Common/Inputs/TravelerInput'; // Importing the Travelers Input Component
@@ -13,251 +13,253 @@ import { useSelector } from 'react-redux'; // Hook to access the Redux store
 import { motion } from 'framer-motion'; // Framer Motion for animations
 
 function SearchPage() {
-  // Get the location object from the router
-  const location = useLocation();
-  
-  // Accessing the current user from the Redux store
-  const { currentUser } = useSelector((state) => state.user);
+	// Get the location object from the router
+	const location = useLocation();
 
-  // Setting state variables
-  const [flights, setFlights] = useState(''); // To store flight data
-  const [error, setError] = useState(null); // To handle general error
-  const [errors, setErrors] = useState({ origin: '', destination: '' }); // To handle field-specific errors
-  const [loading, setLoading] = useState(false); // To control loading state
-  const [triggerSearch, setTriggerSearch] = useState(false); // To trigger search based on props or initial state
-  const [formData, setFormData] = useState({
-    origin: '',
-    destination: '',
-    departureDate: dayjs().format('YYYY-MM-DD'),
-    returnDate: dayjs().add(2, 'day').format('YYYY-MM-DD'),
-    adults: 1,
-    rooms: 1,
-  });
+	// Accessing the current user from the Redux store
+	const { currentUser } = useSelector((state) => state.user);
 
-  // useEffect hook to update formData based on location state (if provided)
-  useEffect(() => {
-    if (location.state) {
-      setFormData({
-        origin: location.state.origin,
-        destination: location.state.destination,
-        departureDate: location.state.departureDate,
-        returnDate: location.state.returnDate,
-        adults: location.state.adults,
-        rooms: location.state.rooms,
-      });
-      setTriggerSearch(true); // Trigger the search if location state exists
-    }
-  }, [location.state]);
+	// Setting state variables
+	const [flights, setFlights] = useState(''); // To store flight data
+	const [error, setError] = useState(null); // To handle general error
+	const [errors, setErrors] = useState({ origin: '', destination: '' }); // To handle field-specific errors
+	const [loading, setLoading] = useState(false); // To control loading state
+	const [triggerSearch, setTriggerSearch] = useState(false); // To trigger search based on props or initial state
+	const [formData, setFormData] = useState({
+		origin: '',
+		destination: '',
+		departureDate: dayjs().format('YYYY-MM-DD'),
+		returnDate: dayjs().add(2, 'day').format('YYYY-MM-DD'),
+		adults: 1,
+		rooms: 1,
+	});
 
-  // useEffect hook to trigger search when required
-  useEffect(() => {
-    if (triggerSearch && formData.origin && formData.destination) {
-      handleSubmit(); // Call submit when required fields are set
-      setTriggerSearch(false); // Reset the trigger after search
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [triggerSearch]);
+	// useEffect hook to update formData based on location state (if provided)
+	useEffect(() => {
+		if (location.state) {
+			setFormData({
+				origin: location.state.origin,
+				destination: location.state.destination,
+				departureDate: location.state.departureDate,
+				returnDate: location.state.returnDate,
+				adults: location.state.adults,
+				rooms: location.state.rooms,
+			});
+			setTriggerSearch(true); // Trigger the search if location state exists
+		}
+	}, [location.state]);
 
-  // Handle changes in date range picker (departure and return dates)
-  const handleDateChange = ([startDate, endDate]) => {
-    setFormData((prev) => ({
-      ...prev,
-      departureDate: startDate.format('YYYY-MM-DD'),
-      returnDate: endDate.format('YYYY-MM-DD'),
-    }));
-  };
+	// useEffect hook to trigger search when required
+	useEffect(() => {
+		if (triggerSearch && formData.origin && formData.destination) {
+			handleSubmit(); // Call submit when required fields are set
+			setTriggerSearch(false); // Reset the trigger after search
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [triggerSearch]);
 
-  // Handle form submission for flight search
-  const handleSubmit = async (e) => {
-    if (e) e.preventDefault(); // Prevent default form submission behavior
-    setLoading(true); // Show the loading indicator
-    setError(null); // Reset any previous errors
+	// Handle changes in date range picker (departure and return dates)
+	const handleDateChange = ([startDate, endDate]) => {
+		setFormData((prev) => ({
+			...prev,
+			departureDate: startDate.format('YYYY-MM-DD'),
+			returnDate: endDate.format('YYYY-MM-DD'),
+		}));
+	};
 
-    let hasError = false; // Flag to track form validation errors
-    const newErrors = { origin: '', destination: '' };
+	// Handle form submission for flight search
+	const handleSubmit = async (e) => {
+		if (e) e.preventDefault(); // Prevent default form submission behavior
+		setLoading(true); // Show the loading indicator
+		setError(null); // Reset any previous errors
 
-    // Validate origin and destination inputs
-    if (!formData.origin) {
-      newErrors.origin = 'Please select an origin.';
-      hasError = true;
-    }
+		let hasError = false; // Flag to track form validation errors
+		const newErrors = { origin: '', destination: '' };
 
-    if (!formData.destination) {
-      newErrors.destination = 'Please select a destination.';
-      hasError = true;
-    }
+		// Validate origin and destination inputs
+		if (!formData.origin) {
+			newErrors.origin = 'Please select an origin.';
+			hasError = true;
+		}
 
-    // Ensure origin and destination are not the same
-    if (formData.destination && formData.origin && formData.origin === formData.destination) {
-      newErrors.destination = 'Origin and destination cannot be the same.';
-      hasError = true;
-    }
+		if (!formData.destination) {
+			newErrors.destination = 'Please select a destination.';
+			hasError = true;
+		}
 
-    // If there are errors, display them and stop the form submission
-    if (hasError) {
-      setErrors(newErrors);
-      setTimeout(() => {
-        setErrors({ origin: '', destination: '' }); // Clear errors after 3 seconds
-      }, 3000);
-      return;
-    }
+		// Ensure origin and destination are not the same
+		if (
+			formData.destination &&
+			formData.origin &&
+			formData.origin === formData.destination
+		) {
+			newErrors.destination = 'Origin and destination cannot be the same.';
+			hasError = true;
+		}
 
-    // Proceed with API request to fetch flight data
-    try {
-      const payload = {
-        userId: currentUser._id, // User ID from the Redux store
-        origin: formData.origin,
-        destination: formData.destination,
-        departureDate: formData.departureDate,
-        returnDate: formData.returnDate,
-        adults: parseInt(formData.adults, 10),
-      };
+		// If there are errors, display them and stop the form submission
+		if (hasError) {
+			setErrors(newErrors);
+			setTimeout(() => {
+				setErrors({ origin: '', destination: '' }); // Clear errors after 3 seconds
+			}, 3000);
+			return;
+		}
 
-      // Sending POST request to fetch flight data
-      const response = await fetch('/api/flight/search-flights', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+		// Proceed with API request to fetch flight data
+		try {
+			const payload = {
+				userId: currentUser._id, // User ID from the Redux store
+				origin: formData.origin,
+				destination: formData.destination,
+				departureDate: formData.departureDate,
+				returnDate: formData.returnDate,
+				adults: parseInt(formData.adults, 10),
+			};
 
-      const data = await response.json(); // Parsing the response data
-      if (!response.ok) {
-        throw new Error('Failed to fetch flights. Please try again.');
-      }
+			// Sending POST request to fetch flight data
+			const response = await fetch('/api/flight/search-flights', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(payload),
+			});
 
-      setFlights(data); // Set flight data in state
-      console.log(data); // Log the fetched data for debugging
-    } catch (error) {
-      console.error('Error fetching flights:', error);
-      setError(error.message); // Set error message in state
-    } finally {
-      setLoading(false); // Hide the loading indicator once done
-    }
-  };
+			const data = await response.json(); // Parsing the response data
+			if (!response.ok) {
+				throw new Error('Failed to fetch flights. Please try again.');
+			}
 
-  // Helper function to calculate the flight duration in minutes
-  const getFlightDuration = (flight) => {
-    const segments = flight.itineraries[0]?.segments;
-    const departureTime = new Date(segments[0].departure.at).getTime();
-    const arrivalTime = new Date(segments[segments.length - 1].arrival.at).getTime();
-    return (arrivalTime - departureTime) / (1000 * 60); // Duration in minutes
-  };
+			setFlights(data); // Set flight data in state
+			console.log(data); // Log the fetched data for debugging
+		} catch (error) {
+			console.error('Error fetching flights:', error);
+			setError(error.message); // Set error message in state
+		} finally {
+			setLoading(false); // Hide the loading indicator once done
+		}
+	};
 
-  // Helper function to format flight times into a readable format
-  const formatTime = (date) =>
-    new Intl.DateTimeFormat('en-US', {
-      hour: 'numeric',
-      minute: 'numeric',
-      hour12: true,
-  }).format(new Date(date));
+	// Helper function to calculate the flight duration in minutes
+	const getFlightDuration = (flight) => {
+		const segments = flight.itineraries[0]?.segments;
+		const departureTime = new Date(segments[0].departure.at).getTime();
+		const arrivalTime = new Date(
+			segments[segments.length - 1].arrival.at
+		).getTime();
+		return (arrivalTime - departureTime) / (1000 * 60); // Duration in minutes
+	};
 
-  return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{
-        duration: .5,
-        ease: "easeInOut"
-      }}
-      className='flex flex-col gap-5 px-4 sm:px-6 lg:px-20 pt-28 md:pt-36 pb-10 bg-white'
-    >
-      {/* Search form for flights */}
-      <form 
-        onSubmit={(e) => handleSubmit(e)}
-        className="xl:flex xl:gap-3 xl:justify-between grid gap-4 md:gap-6 md:grid-cols-3 items-center"
-      >
-        {/* Origin Input */}
-        <div className="relative flex-1">
-          <OriginInput
-            formData={formData}
-            setFormData={setFormData}
-            locations={locations} // Pass available locations to the OriginInput component
-          />
-          {errors.origin && (
-            <p className="text-red-500 text-[0.7rem] absolute mt-1">
-              {errors.origin} {/* Display validation error if any */}
-            </p>
-          )}
-        </div>
+	// Helper function to format flight times into a readable format
+	const formatTime = (date) =>
+		new Intl.DateTimeFormat('en-US', {
+			hour: 'numeric',
+			minute: 'numeric',
+			hour12: true,
+		}).format(new Date(date));
 
-        {/* Destination Input */}
-        <div className="relative flex-1">
-          <DestinationInput
-            formData={formData}
-            setFormData={setFormData}
-            locations={locations} // Pass available locations to the DestinationInput component
-          />
-          {errors.destination && (
-            <p className="text-red-500 text-[0.7rem] absolute mt-1">
-              {errors.destination} {/* Display validation error if any */}
-            </p>
-          )}
-        </div>
+	return (
+		<motion.div
+			initial={{ opacity: 0 }}
+			animate={{ opacity: 1 }}
+			exit={{ opacity: 0 }}
+			transition={{
+				duration: 0.5,
+				ease: 'easeInOut',
+			}}
+			className='flex flex-col gap-5 px-4 sm:px-6 lg:px-20 pt-28 md:pt-36 pb-10 bg-white'>
+			{/* Search form for flights */}
+			<form
+				onSubmit={(e) => handleSubmit(e)}
+				className='xl:flex xl:gap-3 xl:justify-between grid gap-4 md:gap-6 md:grid-cols-3 items-center'>
+				{/* Origin Input */}
+				<div className='relative flex-1'>
+					<OriginInput
+						formData={formData}
+						setFormData={setFormData}
+						locations={locations} // Pass available locations to the OriginInput component
+					/>
+					{errors.origin && (
+						<p className='text-red-500 text-[0.7rem] absolute mt-1'>
+							{errors.origin} {/* Display validation error if any */}
+						</p>
+					)}
+				</div>
 
-        {/* Date Range Picker */}
-        <DateRangePicker
-          onDateChange={handleDateChange} // Handle date changes in the picker
-          defaultDates={[
-            dayjs(formData.departureDate),
-            dayjs(formData.returnDate),
-          ]}
-        />
+				{/* Destination Input */}
+				<div className='relative flex-1'>
+					<DestinationInput
+						formData={formData}
+						setFormData={setFormData}
+						locations={locations} // Pass available locations to the DestinationInput component
+					/>
+					{errors.destination && (
+						<p className='text-red-500 text-[0.7rem] absolute mt-1'>
+							{errors.destination} {/* Display validation error if any */}
+						</p>
+					)}
+				</div>
 
-        {/* Travelers Input */}
-        <TravelersInput 
-          formData={formData} 
-          setFormData={setFormData} 
-        />
+				{/* Date Range Picker */}
+				<DateRangePicker
+					onDateChange={handleDateChange} // Handle date changes in the picker
+					defaultDates={[
+						dayjs(formData.departureDate),
+						dayjs(formData.returnDate),
+					]}
+				/>
 
-        {/* Submit Button */}
-        <button 
-          type="submit" 
-          className="bg-[#48aadf] rounded-full font-semibold text-white cursor-pointer px-8 py-3 h-fit w-fit self-center"
-        >
-          Search
-        </button>
-      </form>
+				{/* Travelers Input */}
+				<TravelersInput
+					formData={formData}
+					setFormData={setFormData}
+				/>
 
-      {/* Loading, Error, or Flight Results Display */}
-      <div>
-        {loading
-        ? <div className='min-h-64 w-full flex items-center justify-center'>
-            <BounceLoader
-              color="#48aadf" // Customize the color of the loader
-              loading={loading} 
-            />
-          </div>
-        : error 
-        ? <motion.div 
-            initial={{ opacity: 0, y: -50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -50 }}
-            transition={{
-              duration: .5,
-              ease: "easeInOut"
-            }}
-            className='flex flex-col gap-5 items-center font-Poppins font-semibold min-h-64 w-full justify-center'
-          >
-            <div className='flex flex-col gap items-center'>
-              <LucideMessageSquareWarning />
-              <p className='text-lg'>
-                We are currently having issues at our end
-              </p>
-              <p className='font-normal font-sans'>Please try again later</p>
-            </div>
-          </motion.div>
+				{/* Submit Button */}
+				<button
+					type='submit'
+					className='bg-[#48aadf] rounded-full font-semibold text-white cursor-pointer px-8 py-3 h-fit w-fit self-center'>
+					Search
+				</button>
+			</form>
 
-        : // Flights Display
-          <FlightsList
-            flights={flights} // Pass flights data to the FlightsList component
-            formatTime={formatTime} // Pass time formatting function
-            getFlightDuration={getFlightDuration} // Pass flight duration function
-          />
-        }
-      </div>
-    </motion.div>
-  );
+			{/* Loading, Error, or Flight Results Display */}
+			<div>
+				{loading ? (
+					<div className='min-h-64 w-full flex items-center justify-center'>
+						<BounceLoader
+							color='#48aadf' // Customize the color of the loader
+							loading={loading}
+						/>
+					</div>
+				) : error ? (
+					<motion.div
+						initial={{ opacity: 0, y: -50 }}
+						animate={{ opacity: 1, y: 0 }}
+						exit={{ opacity: 0, y: -50 }}
+						transition={{
+							duration: 0.5,
+							ease: 'easeInOut',
+						}}
+						className='flex flex-col gap-5 items-center font-semibold min-h-64 w-full justify-center'>
+						<div className='flex flex-col gap items-center'>
+							<LucideMessageSquareWarning />
+							<p className='text-lg'>
+								We are currently having issues at our end
+							</p>
+							<p className='font-normal font-sans'>Please try again later</p>
+						</div>
+					</motion.div>
+				) : (
+					// Flights Display
+					<FlightsList
+						flights={flights} // Pass flights data to the FlightsList component
+						formatTime={formatTime} // Pass time formatting function
+						getFlightDuration={getFlightDuration} // Pass flight duration function
+					/>
+				)}
+			</div>
+		</motion.div>
+	);
 }
 
 export default SearchPage;

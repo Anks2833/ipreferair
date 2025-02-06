@@ -1,7 +1,7 @@
 import { ChevronDown } from 'lucide-react'; // Importing the ChevronDown icon from the 'lucide-react' library.
 import React, { useEffect, useState } from 'react'; // Importing React and necessary hooks.
 import { useSelector } from 'react-redux'; // Importing the useSelector hook from Redux for state management.
-import { countries } from '../Data/Locations'; // Importing country data.
+import { countries } from '../Data/Locations.jsx'; // Importing country data.
 
 const DebitCard = ({ onDataChange, onValidationError }) => {
 	// Accessing the currentUser data from the Redux state.

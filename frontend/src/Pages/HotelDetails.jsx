@@ -163,41 +163,33 @@ const HotelDetails = () => {
 								className='p-4'>
 								<div className='flex flex-col gap-2'>
 									<div>
-										<span className='font-Grotesk font-semibold'>
-											Room Type:{' '}
-										</span>
+										<span className=' font-semibold'>Room Type: </span>
 										{offer.room?.description?.text || 'Not Specified'}
 									</div>
 									<div>
-										<span className='font-Grotesk font-semibold'>
-											Rate Type:{' '}
-										</span>
+										<span className=' font-semibold'>Rate Type: </span>
 										{offer.rateFamilyEstimated?.type || 'Not Specified'}
 									</div>
 									<div>
-										<span className='font-Grotesk font-semibold'>Price: </span>
+										<span className=' font-semibold'>Price: </span>
 										{offer.price.total} {offer.price.currency}
 									</div>
 									<div>
-										<span className='font-Grotesk font-semibold'>
-											Check-in Date:{' '}
-										</span>
+										<span className=' font-semibold'>Check-in Date: </span>
 										{offer.checkInDate}
 									</div>
 									<div>
-										<span className='font-Grotesk font-semibold'>
-											Check-out Date:{' '}
-										</span>
+										<span className=' font-semibold'>Check-out Date: </span>
 										{offer.checkOutDate}
 									</div>
 									<div>
-										<span className='font-Grotesk font-semibold'>Guests: </span>{' '}
+										<span className=' font-semibold'>Guests: </span>{' '}
 										{offer.guests.adults}{' '}
 										{offer.guests.adults > 1 ? 'Adults' : 'Adult'}
 									</div>
 									{/* Cancellation Policies */}
 									<div>
-										<span className='font-Grotesk font-semibold'>
+										<span className=' font-semibold'>
 											Cancellation Policies:{' '}
 										</span>
 										{offer.policies?.cancellations?.map((policy, idx) => (
@@ -217,9 +209,7 @@ const HotelDetails = () => {
 
 					{/* Payment Summary Section */}
 					<div className='bg-blue-100 shadow shadow-[#48aadf] rounded-3xl p-5 flex flex-col gap-3 w-[35rem] max-w-full h-fit'>
-						<h1 className='text-lg font-semibold font-Grotesk'>
-							Payment summary
-						</h1>
+						<h1 className='text-lg font-semibold '>Payment summary</h1>
 						<div className='flex flex-col gap-2'>
 							<div className='flex items-center justify-between'>
 								<p>Hotel</p>
@@ -234,7 +224,7 @@ const HotelDetails = () => {
 								</p>
 							</div>
 							<div className='flex items-center justify-between border-t-2 border-white py-3 mt-3'>
-								<p className='font-semibold font-Grotesk'>Trip total</p>
+								<p className='font-semibold '>Trip total</p>
 								<p>
 									{total.toFixed(2)} {offers?.[0]?.price?.currency}
 								</p>

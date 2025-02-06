@@ -3,8 +3,8 @@ import React, { useEffect, useRef, useState } from 'react'
 import { LazyLoadImage } from 'react-lazy-load-image-component'; // For lazy loading images
 import 'react-lazy-load-image-component/src/effects/blur.css'; // For blur effect while images are loading
 import { useNavigate } from 'react-router-dom'; // For navigation between pages
-import { favorites } from '../Data/Locations'; // Importing the favorites data from a local file
-import { BlurhashCanvas } from 'react-blurhash'; // For rendering a blurhash placeholder before images load
+import { favorites } from '../Data/Locations.jsx'; // Importing the favorites data from a local file
+// import { BlurhashCanvas } from 'react-blurhash'; // For rendering a blurhash placeholder before images load
 import dayjs from 'dayjs'; // For date manipulation
 
 const Favorites = () => {
@@ -60,73 +60,74 @@ const Favorites = () => {
     };
 
     return (
-        <div 
-            className='stay-outer-container' // Main container for the favorites section
-            ref={favoriteRef} // Attach the ref to the outer container
-        >
-            <h1 className='md:text-3xl text-xl font-bold'>Discover your new favorite stay</h1> {/* Title for the section */}
+			<div
+				className='stay-outer-container' // Main container for the favorites section
+				ref={favoriteRef} // Attach the ref to the outer container
+			>
+				<h1 className='md:text-3xl text-xl font-bold'>
+					Discover your new favorite stay
+				</h1>{' '}
+				{/* Title for the section */}
+				{/* Previous Icon - Only visible if the scroll position allows scrolling left */}
+				{stayScroll.prev && (
+					<div
+						className='slide_button back' // Button to scroll left
+						onClick={() => scrollContainer(stayContainerRef, -1)} // Scroll left
+					>
+						<ChevronLeft /> {/* Chevron icon for left scroll */}
+					</div>
+				)}
+				{/* Images Container - Displays all favorite items */}
+				<div
+					className='stay-inner-container' // Container holding all favorite items
+					ref={stayContainerRef} // Attach the ref for scroll handling
+					onScroll={() => handleScroll(stayContainerRef, setStayScroll)} // Call handleScroll on scroll
+				>
+					{favorites.map((favorite, i) => (
+						<div
+							key={i} // Unique key for each favorite item
+							className='stay-container' // Container for each favorite item
+							onClick={() => navigateToHotelSearch(favorite.location)} // Navigate to hotel search on click
+						>
+							{/* Blurhash Placeholder - Shows a blurred image before the actual image is loaded */}
+							{!favoritesLoadedImages[i] && (
+								// <BlurhashCanvas
+								//     hash={destination.blurhash} // Placeholder hash.
+								//     width={333} // Placeholder width.
+								//     height={320} // Placeholder height.
+								//     punch={1} // Adjust brightness.
+								//     className="absolute inset-0 w-full h-[60%] blurhash-fade"
+								// />
+								<></>
+							)}
 
-            {/* Previous Icon - Only visible if the scroll position allows scrolling left */}
-            {stayScroll.prev && (
-                <div
-                    className="slide_button back" // Button to scroll left
-                    onClick={() => scrollContainer(stayContainerRef, -1)} // Scroll left
-                >
-                    <ChevronLeft /> {/* Chevron icon for left scroll */}
-                </div>
-            )}
-
-            {/* Images Container - Displays all favorite items */}
-            <div 
-                className="stay-inner-container" // Container holding all favorite items
-                ref={stayContainerRef} // Attach the ref for scroll handling
-                onScroll={() => handleScroll(stayContainerRef, setStayScroll)} // Call handleScroll on scroll
-            >
-                {favorites.map((favorite, i) => (
-                    <div
-                        key={i} // Unique key for each favorite item
-                        className="stay-container" // Container for each favorite item
-                        onClick={() => navigateToHotelSearch(favorite.location)} // Navigate to hotel search on click
-                    >
-                        {/* Blurhash Placeholder - Shows a blurred image before the actual image is loaded */}
-                        {!favoritesLoadedImages[i] && (
-                            <BlurhashCanvas
-                                hash={favorite.blurhash} // The blurhash string for the placeholder
-                                width={333} // Width of the placeholder
-                                height={320} // Height of the placeholder
-                                punch={1} // Intensity of the blur effect
-                                className="absolute inset-0 w-full h-full blurhash-fade" // Styling for the blurhash canvas
-                            />
-                        )}
-
-                        {/* Full Image - Lazy loaded image */}
-                        <LazyLoadImage
-                            src={favorite.img} // Image source
-                            alt={favorite.name} // Alt text for the image
-                            effect="blur" // Apply a blur effect while loading
-                            className={`object-cover transition-all duration-500 ${
-                                favoritesLoadedImages[i] ? 'opacity-100' : 'opacity-0'
-                            }`} // Transition opacity to make image fade in
-                            style={{ width: 333, height: 320 }} // Set dimensions for the image
-                        />
-                        <p className="absolute font-semibold bottom-5 left-4 text-white text-shadow-md">
-                            {favorite.name} {/* Display the name of the favorite stay */}
-                        </p>
-                    </div>
-                ))}
-            </div>
-
-            {/* Next Icon - Only visible if the scroll position allows scrolling right */}
-            {stayScroll.next && (
-                <div
-                    className="slide_button next" // Button to scroll right
-                    onClick={() => scrollContainer(stayContainerRef, 1)} // Scroll right
-                >
-                    <ChevronRight /> {/* Chevron icon for right scroll */}
-                </div>
-            )}
-        </div>
-    )
+							{/* Full Image - Lazy loaded image */}
+							<LazyLoadImage
+								src={favorite.img} // Image source
+								alt={favorite.name} // Alt text for the image
+								effect='blur' // Apply a blur effect while loading
+								className={`object-cover transition-all duration-500 ${
+									favoritesLoadedImages[i] ? 'opacity-100' : 'opacity-0'
+								}`} // Transition opacity to make image fade in
+								style={{ width: 333, height: 320 }} // Set dimensions for the image
+							/>
+							<p className='absolute font-semibold bottom-5 left-4 text-white text-shadow-md'>
+								{favorite.name} {/* Display the name of the favorite stay */}
+							</p>
+						</div>
+					))}
+				</div>
+				{/* Next Icon - Only visible if the scroll position allows scrolling right */}
+				{stayScroll.next && (
+					<div
+						className='slide_button next' // Button to scroll right
+						onClick={() => scrollContainer(stayContainerRef, 1)} // Scroll right
+					>
+						<ChevronRight /> {/* Chevron icon for right scroll */}
+					</div>
+				)}
+			</div>
+		);
 }
 
 export default Favorites;

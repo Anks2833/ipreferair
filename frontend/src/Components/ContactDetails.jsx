@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'; // For navigation between routes
 import { updateFailure, updateStart, updateSuccess } from '../redux/user/userSlice'; // Redux actions for updating user state
 import { useDispatch, useSelector } from 'react-redux'; // Redux hooks to access and modify global state
 import { SyncLoader } from 'react-spinners'; // Loader for indicating async operations
-import { countries } from '../Data/Locations'; // Importing a list of countries for selection
+import { countries } from '../Data/Locations.jsx'; // Importing a list of countries for selection
 import ScrollToTop from './ScrollToTop'; // Component to scroll to the top of the page on navigation
 import { motion } from 'framer-motion'; // For animations in UI components
 

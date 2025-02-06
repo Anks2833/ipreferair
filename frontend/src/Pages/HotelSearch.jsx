@@ -1,227 +1,276 @@
 // Importing necessary libraries and components
-import { LucideMessageSquareWarning } from 'lucide-react';
+import {
+	ExternalLink,
+	LucideMessageSquareWarning,
+	MapPin,
+	Star,
+} from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { BounceLoader } from 'react-spinners'; // For the loading spinner
-import { locations } from '../Data/Locations'; // Presumably a list of locations for the destination input
-import DestinationInput from '../Components/Common/Inputs/DestinationInput'; // Component for inputting destination
-import TravelersInput from '../Components/Common/Inputs/TravelerInput'; // Component for inputting traveler details
-import DateRangePicker from '../Components/Common/Date Picker/DateRangePicker'; // Date picker for selecting dates
-import { useLocation } from 'react-router-dom'; // Hook to access router state
-import dayjs from 'dayjs'; // For date manipulation
-import HotelList from '../Components/Common/HotelList'; // Component to display list of hotels
-import { useSelector } from 'react-redux'; // To access Redux state
-import { motion } from 'framer-motion'; // For animations
+import { BounceLoader } from 'react-spinners';
+import { locations, placesToVisit } from '../Data/Locations.jsx';
+import DestinationInput from '../Components/Common/Inputs/DestinationInput';
+import TravelersInput from '../Components/Common/Inputs/TravelerInput';
+import DateRangePicker from '../Components/Common/Date Picker/DateRangePicker';
+import { useLocation } from 'react-router-dom';
+import dayjs from 'dayjs';
+import HotelList from '../Components/Common/HotelList';
+import { useSelector } from 'react-redux';
+import { motion } from 'framer-motion';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useMutation } from '@tanstack/react-query';
+import axios from 'axios';
+import {
+	Card,
+	CardContent,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from '@/components/ui/card';
 
 function HotelSearch() {
-    // Access location state from react-router to get previous search data if available
-    const location = useLocation();
-    const { currentUser } = useSelector((state) => state.user); // Accessing current user from Redux store
-    
-    // State variables to hold form data, hotels, errors, loading state, and trigger search
-    const [hotels, setHotels] = useState('');
-    const [error, setError] = useState(null);
-    const [errors, setErrors] = useState({ origin: '', destination: '' });
-    const [triggerSearch, setTriggerSearch] = useState(false); // Flag to trigger the search automatically
-    const [loading, setLoading] = useState(false);
-    const [formData, setFormData] = useState({
-        destination: '',
-        departureDate: dayjs().format('YYYY-MM-DD'), // Default departure date is today
-        returnDate: dayjs().add(2, 'day').format('YYYY-MM-DD'), // Default return date is 2 days from today
-        adults: 1,
-        rooms: 1,
-    });
+	const location = useLocation();
+	const { currentUser } = useSelector((state) => state.user);
 
-    // Effect hook to handle if location state is passed (i.e., when navigating with state)
-    useEffect(() => {
-        if (location.state) {
-            console.log(location.state); // Log the location state for debugging
-            setFormData({
-                destination: location.state.destination,
-                departureDate: location.state.departureDate,
-                returnDate: location.state.returnDate,
-                adults: location.state.adults,
-                rooms: location.state.rooms,
-            });
-            setTriggerSearch(true); // Trigger search automatically after setting form data
-        }
-    }, [location.state]);
+	// State variables
+	const [error, setError] = useState(null);
+	const [errors, setErrors] = useState({ origin: '', destination: '' });
+	const [triggerSearch, setTriggerSearch] = useState(false);
+	const [formData, setFormData] = useState({
+		destination: '',
+		departureDate: dayjs().format('YYYY-MM-DD'),
+		returnDate: dayjs().add(2, 'day').format('YYYY-MM-DD'),
+		adults: 1,
+		rooms: 1,
+	});
 
-    // Effect hook to trigger the search after the form data is set or location state is available
-    useEffect(() => {
-        if (triggerSearch && formData.destination) {
-            handleSubmit(); // Trigger the submit function to fetch hotels
-            setTriggerSearch(false); // Reset triggerSearch flag after submission
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [triggerSearch]);
+	// TanStack Query mutation for hotel search
+	const searchHotelsMutation = useMutation({
+		mutationFn: async (payload) => {
+			const response = await axios.post('/api/flight/search-hotels', payload);
+			return response.data;
+		},
+		onMutate: () => setError(null),
+		onError: (error) => {
+			const errorMessage =
+				error.response?.data?.message ||
+				'Failed to fetch hotels. Please try again.';
+			setError(errorMessage);
+		},
+	});
 
-    // Function to handle changes in date range
-    const handleDateChange = ([startDate, endDate]) => {
-        setFormData((prev) => ({
-            ...prev,
-            departureDate: startDate.format('YYYY-MM-DD'),
-            returnDate: endDate.format('YYYY-MM-DD'),
-        }));
-    };
+	useEffect(() => {
+		if (location.state) {
+			setFormData({
+				destination: location.state.destination,
+				departureDate: location.state.departureDate,
+				returnDate: location.state.returnDate,
+				adults: location.state.adults,
+				rooms: location.state.rooms,
+			});
+			setTriggerSearch(true);
+		}
+	}, [location.state]);
 
-    // Function to handle the form submission and fetch hotels
-    const handleSubmit = async (e) => {
-        if (e) e.preventDefault(); // Prevent default form submission behavior
-        setLoading(true); // Start loading
-        setError(null); // Reset previous errors
+	useEffect(() => {
+		if (triggerSearch && formData.destination) {
+			handleSubmit();
+			setTriggerSearch(false);
+		}
+	}, [triggerSearch]);
 
-        let hasError = false;
-        const newErrors = { destination: '' };
+	const handleDateChange = ([startDate, endDate]) => {
+		setFormData((prev) => ({
+			...prev,
+			departureDate: startDate.format('YYYY-MM-DD'),
+			returnDate: endDate.format('YYYY-MM-DD'),
+		}));
+	};
 
-        // Check if destination is provided
-        if (!formData.destination) {
-            newErrors.destination = 'Please select a destination.';
-            hasError = true;
-        }
+	const handleSubmit = (e) => {
+		e?.preventDefault();
 
-        // If there's an error, show it and stop the form submission
-        if (hasError) {
-            setErrors(newErrors);
-            setTimeout(() => {
-                setErrors({ destination: '' });
-            }, 3000); // Clear error after 3 seconds
-            return;
-        }
+		// Validation
+		let hasError = false;
+		const newErrors = { destination: '' };
 
-        try {
-            // Prepare payload for the API request
-            const payload = {
-                userId: currentUser._id, // Send user ID from Redux store
-                destination: formData.destination, // IATA code or city name
-                checkInDate: formData.departureDate,
-                checkOutDate: formData.returnDate,
-                adults: parseInt(formData.adults, 10),
-                rooms: parseInt(formData.rooms, 10),
-            };
+		if (!formData.destination) {
+			newErrors.destination = 'Please select a destination.';
+			hasError = true;
+		}
 
-            // Send POST request to the backend to search for hotels
-            const response = await fetch(`/api/flight/search-hotels`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-            });
+		if (hasError) {
+			setErrors(newErrors);
+			return;
+		}
 
-            // Parse the response
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error('Failed to fetch hotels. Please try again.');
-            }
+		// Prepare payload
+		const payload = {
+			userId: currentUser._id,
+			destination: formData.destination,
+			checkInDate: formData.departureDate,
+			checkOutDate: formData.returnDate,
+			adults: parseInt(formData.adults, 10),
+			rooms: parseInt(formData.rooms, 10),
+		};
 
-            setHotels(data); // Set fetched hotel data
-            console.log(data); // Log the fetched data for debugging
-        } catch (error) {
-            console.error('Error fetching hotels:', error);
-            setError(error.message); // Set error message in state
-        } finally {
-            setLoading(false); // Stop loading regardless of success or failure
-        }
-    };
+		// Trigger search mutation
+		searchHotelsMutation.mutate(payload);
+	};
 
-    // Helper function to format date/time for display
-    const formatTime = (date) =>
-        new Intl.DateTimeFormat('en-US', {
-            hour: 'numeric',
-            minute: 'numeric',
-            hour12: true,
-    }).format(new Date(date));
+	const formatTime = (date) =>
+		new Intl.DateTimeFormat('en-US', {
+			hour: 'numeric',
+			minute: 'numeric',
+			hour12: true,
+		}).format(new Date(date));
 
-    return (
-        <motion.div 
-            initial={{ opacity: 0 }} // Initial animation state: invisible
-            animate={{ opacity: 1 }} // Animate to visible
-            exit={{ opacity: 0 }} // When exiting, make invisible
-            transition={{
-                duration: .5, // Animation duration
-                ease: "easeInOut" // Easing function for smooth animation
-            }}
-            className='flex flex-col gap-5 px-4 sm:px-6 lg:px-20 pt-28 md:pt-36 pb-10 bg-white'
-        >
-            <form 
-                onSubmit={(e) => handleSubmit(e)} // Handle form submission
-                className="xl:flex xl:gap-3 xl:justify-between grid gap-4 md:gap-6 md:grid-cols-3 items-center"
-            >
-                {/* Destination input */}
-                <div className="relative flex-1">
-                    <DestinationInput
-                        formData={formData}
-                        setFormData={setFormData}
-                        locations={locations} // Passing locations list to the destination input
-                    />
-                    {errors.destination && (
-                        <p className="text-red-500 text-[0.7rem] absolute mt-1">
-                            {errors.destination} {/* Display validation error */}
-                        </p>
-                    )}
-                </div>
+	return (
+		<motion.div
+			initial={{ opacity: 0 }}
+			animate={{ opacity: 1 }}
+			exit={{ opacity: 0 }}
+			transition={{ duration: 0.5, ease: 'easeInOut' }}
+			className='flex flex-col gap-5 px-4 sm:px-6 lg:px-20 pt-28 md:pt-36 pb-10 bg-white'>
+			<div>
+				<form
+					onSubmit={handleSubmit}
+					className='xl:flex xl:gap-3 xl:justify-between grid gap-4 md:gap-6 md:grid-cols-3 items-center'>
+					<div className='relative flex-1'>
+						<DestinationInput
+							formData={formData}
+							setFormData={setFormData}
+							locations={locations}
+						/>
+						{errors.destination && (
+							<p className='text-red-500 text-[0.7rem] absolute mt-1'>
+								{errors.destination}
+							</p>
+						)}
+					</div>
 
-                {/* Date Picker for selecting departure and return dates */}
-                <DateRangePicker
-                    onDateChange={handleDateChange} // Handle date changes
-                    defaultDates={[
-                        dayjs(formData.departureDate),
-                        dayjs(formData.returnDate),
-                    ]}
-                />
+					<DateRangePicker
+						onDateChange={handleDateChange}
+						defaultDates={[
+							dayjs(formData.departureDate),
+							dayjs(formData.returnDate),
+						]}
+					/>
 
-                {/* Travelers input for selecting number of adults and rooms */}
-                <TravelersInput 
-                    formData={formData} 
-                    setFormData={setFormData} 
-                />
+					<TravelersInput
+						formData={formData}
+						setFormData={setFormData}
+					/>
 
-                {/* Search button to submit the form */}
-                <button 
-                    type="submit" 
-                    className="bg-[#48aadf] rounded-full font-semibold text-white cursor-pointer px-8 py-3 h-fit w-fit self-center"
-                >
-                    Search
-                </button>
-            </form>
+					<button
+						type='submit'
+						className='bg-[#48aadf] rounded-full font-semibold text-white cursor-pointer px-8 py-3 h-fit w-fit self-center'>
+						Search
+					</button>
+				</form>
 
-            <div>
-                {/* Loading spinner while fetching data */}
-                {loading
-                ?   <div className='min-h-64 w-full flex items-center justify-center'>
-                        <BounceLoader
-                            color="#48aadf" // Customize the color
-                            loading={loading} 
-                        />
-                    </div>
-                : error 
-                ?   // Error message if something goes wrong during the fetch
-                    <motion.div 
-                        initial={{ opacity: 0, y: -50 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -50 }}
-                        transition={{
-                            duration: .5,
-                            ease: "easeInOut"
-                        }}
-                        className='flex flex-col gap-5 items-center font-Poppins font-semibold min-h-64 w-full justify-center'
-                    >
-                        <div className='flex flex-col gap items-center'>
-                            <LucideMessageSquareWarning />
-                            <p className='text-lg'>
-                                We are currently having issues at our end
-                            </p>
-                            <p className='font-normal font-sans'>Please try again later</p>
-                        </div>
-                    </motion.div>
+				<Tabs
+					defaultValue='hotels'
+					className='mt-10'>
+					<TabsList className='w-full'>
+						<TabsTrigger
+							value='hotels'
+							className='text-2xl'>
+							Hotels
+						</TabsTrigger>
+						<TabsTrigger
+							value='packages'
+							className='text-2xl'>
+							Packages
+						</TabsTrigger>
+					</TabsList>
 
-                :   // Display hotels if no errors
-                    <HotelList
-                        hotels={hotels} // Pass hotel data to the HotelList component
-                        formatTime={formatTime} // Pass formatTime helper for time formatting
-                    />
-                }
-            </div>
-        </motion.div>
-    );
+					<TabsContent value='hotels'>
+						<div>
+							{searchHotelsMutation.isLoading ? (
+								<div className='min-h-64 w-full flex items-center justify-center'>
+									<BounceLoader color='#48aadf' />
+								</div>
+							) : error ? (
+								<motion.div
+									initial={{ opacity: 0, y: -50 }}
+									animate={{ opacity: 1, y: 0 }}
+									exit={{ opacity: 0, y: -50 }}
+									transition={{ duration: 0.5, ease: 'easeInOut' }}
+									className='flex flex-col gap-5 items-center font-semibold min-h-64 w-full justify-center'>
+									<div className='flex flex-col gap items-center'>
+										<LucideMessageSquareWarning />
+										<p className='text-lg'>{error}</p>
+										<p className='font-normal font-sans'>
+											Please try again later
+										</p>
+									</div>
+								</motion.div>
+							) : (
+								<HotelList
+									hotels={searchHotelsMutation.data}
+									formatTime={formatTime}
+								/>
+							)}
+						</div>
+					</TabsContent>
+					<TabsContent value='packages'>
+						<div className='container mx-auto p-4'>
+							<div className='grid gap-6 sm:grid-cols-2 lg:grid-cols-3'>
+								{placesToVisit
+									.find((place) => place.city === formData.destination)
+									?.placesToVisit.map((place) => {
+										return (
+											<Card
+												key={place.name}
+												className='overflow-hidden'>
+                                                <div className='relative h-1/2'>
+													<img
+														src={place.image || '/placeholder.svg'}
+														alt={place.name}
+														className='h-full w-full object-cover'
+													/>
+												</div>
+												<CardHeader>
+													<CardTitle className='flex items-start justify-between'>
+														<span>{place.name}</span>
+														<div className='flex items-center gap-1 text-yellow-500'>
+															<Star className='h-4 w-4 fill-current' />
+															<span className='text-sm'>{place.rating}</span>
+														</div>
+													</CardTitle>
+												</CardHeader>
+												<CardContent>
+													<p className='text-sm text-muted-foreground line-clamp-3'>
+														{place.description}
+													</p>
+													<div className='mt-4 flex items-center gap-2 text-sm text-muted-foreground'>
+														<MapPin className='h-4 w-4' />
+														<span>
+															{place.coordinates.latitude},{' '}
+															{place.coordinates.longitude}
+														</span>
+													</div>
+												</CardContent>
+												<CardFooter className='w-fit h-fit'>
+													<a
+														href={place.website}
+														target='_blank'
+														rel='noopener noreferrer'
+														className='inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline'>
+														Visit Website
+														<ExternalLink className='h-4 w-4' />
+													</a>
+												</CardFooter>
+											</Card>
+										);
+									})}
+							</div>
+						</div>
+					</TabsContent>
+				</Tabs>
+			</div>
+		</motion.div>
+	);
 }
 
 export default HotelSearch;

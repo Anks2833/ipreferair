@@ -4,6 +4,7 @@ import Navbar from './Components/Navbar';
 import Footer from './Components/Footer';
 import Help from './Components/Help';
 import ScrollToTop from './Components/ScrollToTop';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 const App = () => {
 	const location = useLocation();
@@ -25,6 +26,7 @@ const App = () => {
 
 			{/* Render Footer only when it's visible */}
 			{isNavbarVisible && <Footer />}
+			<ReactQueryDevtools initialIsOpen={false} />
 		</>
 	);
 };

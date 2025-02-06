@@ -2,6 +2,7 @@ import axios from 'axios'; // To make HTTP requests to the backend
 import { AnimatePresence, motion } from 'framer-motion'; // For animations and transitions
 import { ChevronDown, Globe, Search, X } from 'lucide-react'; // Additional icons for the UI
 import React, { useEffect, useRef, useState } from 'react';
+import Logo from '/src/assets/logo.svg';
 import {
 	FaBars,
 	FaBell,
@@ -13,7 +14,7 @@ import {
 } from 'react-icons/fa'; // Icons for navigation
 import { useDispatch, useSelector } from 'react-redux'; // Redux hooks for state management
 import { Link } from 'react-router-dom'; // Link for routing to different pages
-import { countries } from '../Data/Locations'; // Importing countries data for the app
+import { countries } from '../Data/Locations.jsx'; // Importing countries data for the app
 import { setActiveTab } from '../redux/tab/tabSlice'; // Redux action for setting the active tab
 import { signOutSuccess } from '../redux/user/userSlice'; // Redux action for user signout
 
@@ -155,12 +156,10 @@ const Navbar = () => {
 						}}>
 						{/* Logo Image */}
 						<img
-							src={`${import.meta.env.VITE_PUBLIC_URL}/images/logo.png`}
-							alt='Velora logo'
-							className='w-8 p-1 rounded-br-lg bg-black'
+							src={Logo}
+							alt='iprefer air logo'
+							className='h-8 '
 						/>
-						{/* Logo Text */}
-						<h1 className='text-xl font-sans text-black'>velora</h1>
 					</Link>
 
 					{/* Services Dropdown Section */}
@@ -177,12 +176,11 @@ const Navbar = () => {
 
 						{/* Services Dropdown Menu */}
 						<div
-							className={`hidden absolute top-8 bg-white rounded-xl lg:flex flex-col transition-all duration-500 ease-in-out transform overflow-hidden shadow shadow-gray-300 font-normal text-sm
-                        ${
-													services
-														? 'w-64 h-96 translate-y-0 opacity-100'
-														: 'w-0 h-0 -translate-y-3 opacity-0'
-												}`}>
+							className={`hidden absolute top-8 bg-white rounded-xl lg:flex flex-col transition-all duration-500 ease-in-out transform overflow-hidden shadow shadow-gray-300 font-normal text-sm ${
+								services
+									? 'w-64 h-96 translate-y-0 opacity-100'
+									: 'w-0 h-0 -translate-y-3 opacity-0'
+							}`}>
 							{/* Service Options */}
 							<div className='flex flex-col py-3 w-full border-b-2 border-gray-400'>
 								{/* Stays Service */}
@@ -272,7 +270,7 @@ const Navbar = () => {
 				</div>
 
 				{/* Right Side: Language Selector, Links, Notifications, and Profile */}
-				<div className='hidden lg:flex items-center gap-14 text-[.9rem] font-Grotesk'>
+				<div className='hidden lg:flex items-center gap-14 text-[.9rem] '>
 					{/* Language Selector */}
 					<div>
 						<div
@@ -363,7 +361,7 @@ const Navbar = () => {
 			{/* Sidebar */}
 			<aside
 				ref={sidebarServicesRef}
-				className={`z-20 fixed overflow-auto top-[4.8rem] font-Grotesk left-0 w-96 max-w-full h-[100vh] bg-gradient-to-b bg-[#ffffff] text-black lg:hidden transition-all duration-700 ease-in-out transform 
+				className={`z-20 fixed overflow-auto top-[4.8rem]  left-0 w-96 max-w-full h-[100vh] bg-gradient-to-b bg-[#ffffff] text-black lg:hidden transition-all duration-700 ease-in-out transform 
                 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`} // Sidebar positioning, visibility transition, and styling
 			>
 				{/* Navigation menu */}

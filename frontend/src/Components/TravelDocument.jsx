@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { updateFailure, updateStart, updateSuccess } from '../redux/user/userSlice';
 import { SyncLoader } from 'react-spinners';
-import { countries } from '../Data/Locations';
+import { countries } from '../Data/Locations.jsx';
 import { motion } from 'framer-motion';
 
 const TravelDocument = () => {

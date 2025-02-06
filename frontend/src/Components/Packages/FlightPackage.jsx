@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import dayjs from 'dayjs' // Importing dayjs for date manipulation
 import { useNavigate } from 'react-router-dom'; // Importing useNavigate hook to navigate between pages
 import OriginInput from '../Common/Inputs/OriginInput'; // Component to input origin
-import { locations } from '../../Data/Locations'; // Importing locations data for use in OriginInput and DestinationInput
+import { locations } from '../../Data/Locations.jsx'; // Importing locations data for use in OriginInput and DestinationInput
 import DestinationInput from '../Common/Inputs/DestinationInput'; // Component to input destination
 import DateRangePicker from '../Common/Date Picker/DateRangePicker'; // Component for selecting dates
 import TravelersInput from '../Common/Inputs/TravelerInput'; // Component to handle traveler input

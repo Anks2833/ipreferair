@@ -3,7 +3,7 @@ import dayjs from 'dayjs'; // dayjs for date manipulation
 import { useState } from 'react'; // React for building components, useState for managing component state
 import { useSelector } from 'react-redux'; // useSelector for accessing global state (current user)
 import { useNavigate } from 'react-router-dom'; // useNavigate for navigation
-import { locations } from '../../Data/Locations'; // Array of available locations
+import { locations } from '../../Data/Locations.jsx'; // Array of available locations
 import DateRangePicker from '../Common/Date Picker/DateRangePicker'; // Custom date range picker component
 import DestinationInput from '../Common/Inputs/DestinationInput'; // Input component for selecting the destination location
 import OriginInput from '../Common/Inputs/OriginInput'; // Input component for selecting the origin location
@@ -162,7 +162,7 @@ const RoundTrip = () => {
 			</div>
 
 			{/* Additional Options: Add Place to Stay & Add Car */}
-			<div className='flex items-center gap-10 font-Grotesk'>
+			<div className='flex items-center gap-10 '>
 				{/* Add Place to Stay Checkbox */}
 				<div className='flex items-center'>
 					<input

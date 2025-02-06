@@ -191,7 +191,7 @@ const AirportToHotel = () => {
 							{/* Label for Airport input field with transition effects */}
 							<label
 								htmlFor='origin'
-								className={`absolute left-3 text-sm font-Poppins cursor-text transition-all duration-500 ease-in-out 
+								className={`absolute left-3 text-sm cursor-text transition-all duration-500 ease-in-out 
                                     ${
 																			focused2
 																				? 'top-[0.1rem] scale-75 -translate-x-1 transform -translate-y-1/2'
@@ -258,7 +258,7 @@ const AirportToHotel = () => {
 							{/* Label for Hotel input field with transition effects */}
 							<label
 								htmlFor='destination'
-								className={`absolute left-3 text-sm font-Poppins cursor-text transition-all duration-500 ease-in-out 
+								className={`absolute left-3 text-sm cursor-text transition-all duration-500 ease-in-out 
                                     ${
 																			focused1
 																				? 'top-[0.1rem] scale-75 -translate-x-1 transform -translate-y-1/2'
@@ -465,7 +465,7 @@ const AirportToHotel = () => {
 					<div className='w-full h-full relative'>
 						<label
 							htmlFor='date'
-							className='absolute left-3 text-sm font-Poppins cursor-text top-[0.1rem] scale-75 -translate-x-4 transform -translate-y-1/2'>
+							className='absolute left-3 text-sm cursor-text top-[0.1rem] scale-75 -translate-x-4 transform -translate-y-1/2'>
 							Flight arrival date
 						</label>
 						<DatePicker
@@ -486,7 +486,7 @@ const AirportToHotel = () => {
 					<div className='w-full h-full relative'>
 						<label
 							htmlFor='flight-arrival-time'
-							className='absolute left-3 text-sm font-Poppins cursor-text top-[0.1rem] scale-75 -translate-x-3 transform -translate-y-1/2'>
+							className='absolute left-3 text-sm cursor-text top-[0.1rem] scale-75 -translate-x-3 transform -translate-y-1/2'>
 							Flight arrival time
 						</label>
 						<TimePicker
