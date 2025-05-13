@@ -1,7 +1,7 @@
 import { CheckCheck, ChevronDown } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
-import DebitCard from '../Components/DebitCard';
-import ClickToPay from '../Components/ClickToPay';
+import DebitCard from '../components/DebitCard';
+import ClickToPay from '../components/ClickToPay';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { listItems, subListItems } from '../Data/ListItems';

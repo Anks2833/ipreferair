@@ -1,126 +1,216 @@
-import React, { useEffect, useRef } from 'react';
-import Stays from '../Components/Services/Stays'; // Import Stays component
-import Flights from '../Components/Services/Flights'; // Import Flights component
-import Packages from '../Components/Services/Packages'; // Import Packages component
-import Things from '../Components/Services/Things'; // Import Things to do component
-import Cars from '../Components/Services/Cars'; // Import Cars component
-import { useDispatch, useSelector } from 'react-redux'; // Import Redux hooks for state management
-import { setActiveTab } from '../redux/tab/tabSlice'; // Action to set active tab in Redux state
-import SearchData from '../Components/SearchData'; // Import recent search data component
-import 'react-lazy-load-image-component/src/effects/blur.css'; // Lazy loading effect
-import { motion } from 'framer-motion'; // Import framer-motion for animations
-import Favorites from '../Components/Favorites'; // Import Favorites component
-import Destinations from '../Components/Destinations'; // Import Destinations component
-import Explore from '../Components/Explore'; // Import Explore component
+import React, { useEffect, useRef, useState } from "react";
+import Stays from "../components/Services/Stays";
+import Flights from "../components/Services/Flights";
+import Packages from "../components/Services/Packages";
+import Things from "../components/Services/Things";
+import Cars from "../components/Services/Cars";
+import { useDispatch, useSelector } from "react-redux";
+import { setActiveTab } from "../redux/tab/tabSlice";
+import SearchData from "../components/SearchData";
+import "react-lazy-load-image-component/src/effects/blur.css";
+import { motion, AnimatePresence } from "framer-motion";
+import Favorites from "../components/Favorites";
+import Destinations from "../components/Destinations";
+import Explore from "../components/Explore";
+
+import { Home as HomeIcon, Plane, Car, Package, Map } from "lucide-react";
 
 const Home = () => {
-	// Dispatch and state hooks for Redux state management
-	const dispatch = useDispatch();
-	const activeTab = useSelector((state) => state.tab.activeTab); // Get the active tab from Redux state
-	const indicatorRef = useRef(); // Reference for the indicator that moves under active tab
-	const tabContainerRef = useRef(); // Reference for the tab container to track tab changes
+  const dispatch = useDispatch();
+  const activeTab = useSelector((state) => state.tab.activeTab);
+  const indicatorRef = useRef();
+  const tabContainerRef = useRef();
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-	// Function to handle tab changes
-	const OpenTab = (tabName) => {
-		// Dispatch the active tab change with the tab name (transformed into lowercase and hyphenated)
-		dispatch(setActiveTab(tabName.toLowerCase().replace(/\s+/g, '-')));
-	};
+  const OpenTab = (tabName) => {
+    dispatch(setActiveTab(tabName.toLowerCase().replace(/\s+/g, "-")));
+  };
 
-	// useEffect hook to adjust the position and width of the indicator when the active tab changes
-	useEffect(() => {
-		const tabs = tabContainerRef.current?.querySelectorAll('p'); // Get all tab elements
-		const activeTabElement = Array.from(tabs).find(
-			(tab) => tab.textContent.toLowerCase().replace(/\s+/g, '-') === activeTab // Find the active tab based on its name
-		);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
 
-		// If the active tab element and indicator ref exist, adjust the indicator's position and width
-		if (activeTabElement && indicatorRef.current) {
-			const { offsetLeft, offsetWidth } = activeTabElement; // Get the position and width of the active tab
-			indicatorRef.current.style.width = `${offsetWidth}px`; // Set indicator width
-			indicatorRef.current.style.left = `${offsetLeft}px`; // Set indicator position
-		}
-	}, [activeTab]); // Re-run the effect whenever the active tab changes
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
-	return (
-		<motion.div
-			initial={{ opacity: 0 }} // Initial opacity for fade-in effect
-			animate={{ opacity: 1 }} // Final opacity for fade-in effect
-			exit={{ opacity: 0 }} // Exit opacity for fade-out effect
-			transition={{
-				duration: 0.5, // Transition duration for fade effect
-				ease: 'easeInOut', // Ease-in and ease-out transition
-			}}
-			className='flex flex-col gap-16 px-4 sm:px-6 lg:px-20 sm:pt-36 pt-28 pb-10 bg-white'>
-			{/* Home Navigation Component: Tabs for switching between services */}
-			<div className='border rounded-2xl w-full'>
-				<div
-					className='flex justify-center items-center border-b text-nowrap overflow-x-auto remove-scroll-bar font-semibold text-[#000000e3] text-[0.9rem] relative '
-					ref={tabContainerRef} // Reference to the tab container
-				>
-					{/* Tab buttons for different services */}
-					<p
-						className='py-3 px-4 cursor-pointer transition-all duration-500 ease-in-out max-[500px]:ml-20 max-[400px]:ml-32'
-						onClick={() => OpenTab('Stays')} // Switch to 'Stays' tab
-					>
-						Stays
-					</p>
-					<p
-						className='py-3 px-4 cursor-pointer transition-all duration-500 ease-in-out'
-						onClick={() => OpenTab('Flights')} // Switch to 'Flights' tab
-					>
-						Flights
-					</p>
-					<p
-						className='py-3 px-4 cursor-pointer transition-all duration-500 ease-in-out'
-						onClick={() => OpenTab('Cars')} // Switch to 'Cars' tab
-					>
-						Cars
-					</p>
-					<p
-						className='py-3 px-4 cursor-pointer transition-all duration-500 ease-in-out'
-						onClick={() => OpenTab('Packages')} // Switch to 'Packages' tab
-					>
-						Packages
-					</p>
-					<p
-						className='py-3 px-4 cursor-pointer transition-all duration-500 ease-in-out max-[500px]:mr-5'
-						onClick={() => OpenTab('Things to do')} // Switch to 'Things to do' tab
-					>
-						Things to do
-					</p>
+  useEffect(() => {
+    const tabs = tabContainerRef.current?.querySelectorAll(".tab-item");
+    const activeTabElement = Array.from(tabs).find(
+      (tab) => tab.getAttribute("data-tab").toLowerCase() === activeTab
+    );
 
-					{/* Underline indicator to show the active tab */}
-					<div
-						ref={indicatorRef} // Reference for the underline indicator
-						className='absolute bottom-0 h-[0.27rem] bg-[#48aadf] rounded-t-full transition-all duration-300 ease-in-out'
-					/>
-				</div>
-				{/* Tab Contents: Render content based on the active tab */}
-				{activeTab === 'stays' && <Stays />}{' '}
-				{/* Show Stays content when 'Stays' tab is active */}
-				{activeTab === 'flights' && <Flights />}{' '}
-				{/* Show Flights content when 'Flights' tab is active */}
-				{activeTab === 'cars' && <Cars />}{' '}
-				{/* Show Cars content when 'Cars' tab is active */}
-				{activeTab === 'packages' && <Packages />}{' '}
-				{/* Show Packages content when 'Packages' tab is active */}
-				{activeTab === 'things-to-do' && <Things />}{' '}
-				{/* Show Things to do content when 'Things to do' tab is active */}
-			</div>
+    if (activeTabElement && indicatorRef.current) {
+      const { offsetLeft, offsetWidth } = activeTabElement;
+      indicatorRef.current.style.width = `${offsetWidth}px`;
+      indicatorRef.current.style.left = `${offsetLeft}px`;
+    }
+  }, [activeTab]);
 
-			{/* Recent Searches: Component for displaying recent search data */}
-			<SearchData />
+  const tabs = [
+    { name: "Stays", icon: <HomeIcon size={18} /> },
+    { name: "Flights", icon: <Plane size={18} /> },
+    { name: "Cars", icon: <Car size={18} /> },
+    { name: "Packages", icon: <Package size={18} /> },
+    { name: "Things to do", icon: <Map size={18} /> },
+  ];
 
-			{/* Favorite Stays: Component for displaying favorite stays */}
-			<Favorites />
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: 0.5,
+        ease: "easeInOut",
+        staggerChildren: 0.1,
+      },
+    },
+  };
 
-			{/* Destination Stays: Component for displaying destination-based stays */}
-			<Destinations />
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1, transition: { duration: 0.5 } },
+  };
 
-			{/* Explore Stays: Component for exploring different stays */}
-			<Explore />
-		</motion.div>
-	);
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{
+        duration: 0.5,
+        ease: "easeInOut",
+      }}
+      className="min-h-screen bg-gradient-to-b from-blue-50 to-white pt-12"
+    >
+      <div className="w-full bg-blue-600 text-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="max-w-3xl mx-auto text-center"
+          >
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
+              Find Your Perfect Journey
+            </h1>
+            <p className="text-lg sm:text-xl opacity-90 mb-6">
+              Discover amazing places, best deals, and unforgettable experiences
+            </p>
+          </motion.div>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 -mt-8">
+        <motion.div
+          initial={{ y: 30, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="bg-white rounded-xl shadow-lg mb-12 overflow-hidden"
+        >
+          <div
+            className="flex justify-center items-center border-b relative overflow-x-auto"
+            ref={tabContainerRef}
+          >
+            {tabs.map((tab) => (
+              <div
+                key={tab.name}
+                data-tab={tab.name.toLowerCase().replace(/\s+/g, "-")}
+                className={`tab-item py-4 px-5 cursor-pointer transition-all duration-300 flex items-center gap-2 whitespace-nowrap ${
+                  activeTab === tab.name.toLowerCase().replace(/\s+/g, "-")
+                    ? "text-blue-600 font-medium"
+                    : "text-gray-600 hover:text-blue-500"
+                }`}
+                onClick={() => OpenTab(tab.name)}
+              >
+                {tab.icon}
+                <span>{tab.name}</span>
+              </div>
+            ))}
+
+            {/* Underline indicator */}
+            <div
+              ref={indicatorRef}
+              className="absolute bottom-0 h-1 bg-blue-600 rounded-t-full transition-all duration-300 ease-in-out"
+            />
+          </div>
+
+          {/* Tab Contents with Animation */}
+          <div className="p-6">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+              >
+                {activeTab === "stays" && <Stays />}
+                {activeTab === "flights" && <Flights />}
+                {activeTab === "cars" && <Cars />}
+                {activeTab === "packages" && <Packages />}
+                {activeTab === "things-to-do" && <Things />}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </motion.div>
+
+        {/* Content Sections */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="space-y-12"
+        >
+          {/* Recent Searches */}
+          <motion.div
+            variants={itemVariants}
+            className="bg-white rounded-xl p-6 shadow-sm"
+          >
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+              Recent Searches
+            </h2>
+            <SearchData />
+          </motion.div>
+
+          {/* Favorite Stays */}
+          <motion.div
+            variants={itemVariants}
+            className="bg-white rounded-xl p-6 shadow-sm"
+          >
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+              Your Favorites
+            </h2>
+            <Favorites />
+          </motion.div>
+
+          {/* Destinations */}
+          <motion.div
+            variants={itemVariants}
+            className="bg-white rounded-xl p-6 shadow-sm"
+          >
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+              Popular Destinations
+            </h2>
+            <Destinations />
+          </motion.div>
+
+          {/* Explore */}
+          <motion.div
+            variants={itemVariants}
+            className="bg-white rounded-xl p-6 shadow-sm"
+          >
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+              Explore The World
+            </h2>
+            <Explore />
+          </motion.div>
+        </motion.div>
+      </div>
+
+    </motion.div>
+  );
 };
 
 export default Home;

@@ -145,10 +145,10 @@ const ProfilePayment = () => {
                     >
                         <div className="px-5 py-2">
                             <p>
-                                Velora's Travel Arranger lets you book travel for your friends
+                                ipreferstay's Travel Arranger lets you book travel for your friends
                                 or co-workers. With permission, you can arrange trips directly
                                 from their account, making it simple to coordinate and manage
-                                trips for any Velora traveler.
+                                trips for any ipreferstay traveler.
                             </p>
                         </div>
                     </div>

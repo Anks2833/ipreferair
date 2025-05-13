@@ -8,12 +8,12 @@ import {
 import React, { useEffect, useState } from 'react';
 import { BounceLoader } from 'react-spinners';
 import { locations, placesToVisit } from '../Data/Locations.jsx';
-import DestinationInput from '../Components/Common/Inputs/DestinationInput';
-import TravelersInput from '../Components/Common/Inputs/TravelerInput';
-import DateRangePicker from '../Components/Common/Date Picker/DateRangePicker';
+import DestinationInput from '../components/Common/Inputs/DestinationInput.jsx';
+import TravelersInput from '../components/Common/Inputs/TravelerInput.jsx';
+import DateRangePicker from '../components/Common/Date Picker/DateRangePicker.jsx';
 import { useLocation } from 'react-router-dom';
 import dayjs from 'dayjs';
-import HotelList from '../Components/Common/HotelList';
+import HotelList from '../components/Common/HotelList.jsx';
 import { useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';

@@ -9,28 +9,23 @@ const SearchDataSchema = new mongoose.Schema({
         ref: 'User', // Refers to the 'User' model, establishing a relationship
         required: true, // Ensures userId is provided
     },
-    // The type of search (either flights or stays)
     searchType: {
-        type: String, // String type for the search type
-        enum: ['flights', 'stays'], // Only allow 'flights' or 'stays' as values
-        required: true, // Ensures searchType is provided
+        type: String,
+        enum: ['flights', 'stays'],
+        required: true,
     },
-    // Details of the flight or stay search
-    origin: String, // Starting point for flights
-    destination: String, // Destination point for flights
-    departureDate: Date, // Date of departure for flights
-    returnDate: Date, // Date of return for round trips
-    // The number of travelers in the search
+    origin: String,
+    destination: String,
+    departureDate: Date,
+    returnDate: Date,
     numberOfTravelers: {
-        type: Number, // Number type for the count of travelers
-        required: true, // Ensures numberOfTravelers is provided
+        type: Number,
+        required: true,
     },
-    // Automatically set the creation date to the current date/time
     createdAt: {
         type: Date,
-        default: Date.now, // Default value is the current date/time
+        default: Date.now,
     },
 });
 
-// Export the SearchData model, which allows interacting with the 'SearchData' collection in MongoDB
 export default mongoose.model('SearchData', SearchDataSchema);

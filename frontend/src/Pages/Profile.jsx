@@ -1,71 +1,245 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import ProfileSidebar from "../Components/ProfileSidebar";
-import ProfileDetails from "../Components/ProfileDetails";
-import ProfileReviews from "../Components/ProfileReviews";
-import ProfileSettings from "../Components/ProfileSettings";
-import ProfilePayment from "../Components/ProfilePayment";
-import BasicDetails from "../Components/BasicDetails";
-import ContactDetails from "../Components/ContactDetails";
-import ProfileBookings from "../Components/ProfileBookings";
-import { motion } from "framer-motion";
+import ProfileSidebar from "../components/ProfileSidebar";
+import ProfileDetails from "../components/ProfileDetails";
+import ProfileReviews from "../components/ProfileReviews";
+import ProfileSettings from "../components/ProfileSettings";
+import ProfilePayment from "../components/ProfilePayment";
+import BasicDetails from "../components/BasicDetails";
+import ContactDetails from "../components/ContactDetails";
+import ProfileBookings from "../components/ProfileBookings";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  User,
+  CreditCard,
+  Star,
+  Settings,
+  FileText,
+  Phone,
+  Calendar,
+} from "lucide-react";
 
-// UserProfile component serves as the profile page for the user, handling different tabs such as details, settings, etc.
 const UserProfile = () => {
-  // useLocation is a hook from 'react-router-dom' to get the current location object, which includes the pathname and search params.
   const location = useLocation();
-  // useNavigate is a hook from 'react-router-dom' to programmatically navigate the user to another page.
   const navigate = useNavigate();
-  // useState is used to keep track of the currently selected tab in the profile.
   const [tab, setTab] = useState("collection");
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // useEffect is used to run some side-effects. This particular effect reads the URL parameters and sets the tab accordingly.
+  // Handle window resize
   useEffect(() => {
-    // Creating a new URLSearchParams instance to parse query parameters from the current URL.
-    const urlParams = new URLSearchParams(location.search); 
-    // Extracting the value of the 'tab' query parameter.
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      if (window.innerWidth >= 768) {
+        setSidebarOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Set the active tab from URL parameters
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
     const tabFromUrl = urlParams.get("tab");
 
-    // If there is no 'tab' query parameter and we're on the profile page ('/profile'), navigate to the details tab by default.
     if (!tabFromUrl && location.pathname === "/profile") {
       navigate("/profile?tab=details", { replace: true });
       setTab("details");
-    } 
-    // If 'tab' parameter exists, set the corresponding tab.
-    else if (tabFromUrl) {
+    } else if (tabFromUrl) {
       setTab(tabFromUrl);
     }
-  }, [location.search, location.pathname, navigate]); // Dependency array: the effect depends on the URL search params, pathname, and navigate.
+  }, [location.search, location.pathname, navigate]);
+
+  // Function to navigate to a tab
+  const navigateToTab = (tabName) => {
+    navigate(`/profile?tab=${tabName}`);
+    setTab(tabName);
+    if (isMobile) {
+      setSidebarOpen(false);
+    }
+  };
+
+  // Get tab information
+  const getTabInfo = (tabName) => {
+    const tabMap = {
+      details: {
+        title: "Personal Details",
+        icon: <User size={20} />,
+        description: "Manage your personal information and account details",
+      },
+      payment: {
+        title: "Payment Methods",
+        icon: <CreditCard size={20} />,
+        description: "Manage your payment options and transaction history",
+      },
+      reviews: {
+        title: "My Reviews",
+        icon: <Star size={20} />,
+        description: "View and manage your reviews for past bookings",
+      },
+      settings: {
+        title: "Account Settings",
+        icon: <Settings size={20} />,
+        description: "Configure your account preferences and notifications",
+      },
+      edit_basic_details: {
+        title: "Edit Basic Details",
+        icon: <FileText size={20} />,
+        description:
+          "Update your name, date of birth, and other basic information",
+      },
+      edit_contact_details: {
+        title: "Edit Contact Information",
+        icon: <Phone size={20} />,
+        description: "Update your contact information and address details",
+      },
+      bookings: {
+        title: "My Bookings",
+        icon: <Calendar size={20} />,
+        description: "View and manage your current and past bookings",
+      },
+    };
+
+    return (
+      tabMap[tabName] || {
+        title: "Profile",
+        icon: <User size={20} />,
+        description: "",
+      }
+    );
+  };
+
+  const currentTabInfo = getTabInfo(tab);
+
+  // Animation variants
+  const pageTransition = {
+    initial: { opacity: 0, x: 20 },
+    animate: { opacity: 1, x: 0 },
+    exit: { opacity: 0, x: -20 },
+    transition: { duration: 0.3, ease: "easeInOut" },
+  };
 
   return (
-    // Motion.div is used here to animate the profile page's transitions.
-    // It animates the opacity when the component is mounted and unmounted.
-    <motion.div 
-      initial={{ opacity: 0 }} // Initial state of opacity set to 0 when the component mounts.
-      animate={{ opacity: 1 }} // The final opacity when the component is fully rendered.
-      exit={{ opacity: 0 }} // When the component unmounts, it fades out to opacity 0.
-      transition={{
-        duration: .5, // Duration of the transition in seconds.
-        ease: "easeInOut" // Easing function for a smooth transition.
-      }}
-      className="flex gap-5 px-4 sm:px-6 lg:px-20 pt-24 pb-10 bg-white"
-    >
-      {/* ProfileSidebar component is displayed on the left side of the screen, allowing navigation between profile sections. */}
-      <ProfileSidebar/>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header Banner */}
+      <div className="w-full bg-gradient-to-r from-blue-600 to-blue-500 h-48 md:h-64">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-10">
+          <h1 className="text-white text-3xl font-bold">My Profile</h1>
+          <p className="text-blue-100 mt-1">
+            Manage your personal information and preferences
+          </p>
+        </div>
+      </div>
 
-      {/* Conditional rendering based on the current tab */}
-      {/* Each of the components below will only render if the current tab matches the tab state. */}
-      {tab === 'details' && <ProfileDetails/>}  {/* ProfileDetails is shown if 'details' tab is selected */}
-      {tab === 'payment' && <ProfilePayment/>}  {/* ProfilePayment is shown if 'payment' tab is selected */}
-      {tab === 'reviews' && <ProfileReviews/>}  {/* ProfileReviews is shown if 'reviews' tab is selected */}
-      {tab === 'settings' && <ProfileSettings/>}  {/* ProfileSettings is shown if 'settings' tab is selected */}
-      {tab === 'edit_basic_details' && <BasicDetails/>}  {/* BasicDetails is shown if 'edit_basic_details' tab is selected */}
-      {tab === 'edit_contact_details' && <ContactDetails/>}  {/* ContactDetails is shown if 'edit_contact_details' tab is selected */}
-      {tab === 'bookings' && <ProfileBookings/>}  {/* ProfileBookings is shown if 'bookings' tab is selected */}
-    </motion.div>
+      {/* Mobile Menu Toggle */}
+      {isMobile && (
+        <div className="fixed bottom-6 right-6 z-50">
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="w-14 h-14 bg-blue-600 rounded-full shadow-lg flex items-center justify-center text-white"
+          >
+            {sidebarOpen ? (
+              <span className="text-xl">×</span>
+            ) : (
+              <User size={24} />
+            )}
+          </button>
+        </div>
+      )}
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 md:mt-20 pb-16 relative z-10">
+        <div className="flex flex-col md:flex-row gap-6">
+          {/* Sidebar - Desktop */}
+          <div className="hidden md:block w-64 flex-shrink-0">
+            <div className="sticky top-24">
+              <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                <ProfileSidebar activeTab={tab} onTabChange={navigateToTab} />
+              </div>
+            </div>
+          </div>
+
+          {/* Sidebar - Mobile */}
+          {isMobile && (
+            <AnimatePresence>
+              {sidebarOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  className="fixed inset-0 bg-black bg-opacity-50 z-40"
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <motion.div
+                    initial={{ x: "100%" }}
+                    animate={{ x: 0 }}
+                    exit={{ x: "100%" }}
+                    transition={{ type: "spring", damping: 25 }}
+                    className="absolute right-0 top-0 h-full w-64 bg-white shadow-xl"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="p-4 border-b border-gray-200">
+                      <h2 className="text-lg font-semibold text-gray-800">
+                        Menu
+                      </h2>
+                    </div>
+                    <ProfileSidebar
+                      activeTab={tab}
+                      onTabChange={navigateToTab}
+                    />
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          )}
+
+          {/* Main Content Area */}
+          <div className="flex-1">
+            {/* Tab Header */}
+            <div className="bg-white rounded-xl shadow-sm mb-6 overflow-hidden">
+              <div className="p-6 border-b border-gray-200">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-blue-100 text-blue-600 rounded-lg">
+                    {currentTabInfo.icon}
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-800">
+                      {currentTabInfo.title}
+                    </h2>
+                    <p className="text-sm text-gray-500">
+                      {currentTabInfo.description}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Content Area */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={tab}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                variants={pageTransition}
+                className="bg-white rounded-xl shadow-sm overflow-hidden"
+              >
+                {tab === "details" && <ProfileDetails />}
+                {tab === "payment" && <ProfilePayment />}
+                {tab === "reviews" && <ProfileReviews />}
+                {tab === "settings" && <ProfileSettings />}
+                {tab === "edit_basic_details" && <BasicDetails />}
+                {tab === "edit_contact_details" && <ContactDetails />}
+                {tab === "bookings" && <ProfileBookings />}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
-// Exporting UserProfile component to make it available for use in other parts of the app.
 export default UserProfile;

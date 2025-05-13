@@ -4,10 +4,10 @@ import { useState } from 'react'; // React for building components, useState for
 import { useSelector } from 'react-redux'; // useSelector for accessing global state (current user)
 import { useNavigate } from 'react-router-dom'; // useNavigate for navigation
 import { locations } from '../../Data/Locations.jsx'; // Array of available locations
-import DateRangePicker from '../Common/Date Picker/DateRangePicker'; // Custom date range picker component
-import DestinationInput from '../Common/Inputs/DestinationInput'; // Input component for selecting the destination location
-import OriginInput from '../Common/Inputs/OriginInput'; // Input component for selecting the origin location
-import TravelersInput from '../Common/Inputs/TravelerInput'; // Input component for selecting the number of travelers
+import DateRangePicker from '../Common/Date Picker/DateRangePicker.jsx'; // Custom date range picker component
+import DestinationInput from '../Common/Inputs/DestinationInput.jsx'; // Input component for selecting the destination location
+import OriginInput from '../Common/Inputs/OriginInput.jsx'; // Input component for selecting the origin location
+import TravelersInput from '../Common/Inputs/TravelerInput.jsx'; // Input component for selecting the number of travelers
 
 // RoundTrip component
 const RoundTrip = () => {

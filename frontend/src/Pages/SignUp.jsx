@@ -1,726 +1,922 @@
-import React, { useEffect, useRef, useState } from 'react'; // Importing React hooks for state management and effects
-import { ArrowLeft, EyeClosedIcon, EyeIcon, X } from 'lucide-react'; // Importing icons for UI components
-import OAuth from '../Components/OAuth'; // Importing OAuth component
-import { Link, useNavigate } from 'react-router-dom'; // Importing navigation hooks from react-router-dom
-import { motion, AnimatePresence } from 'framer-motion'; // Importing animation libraries for motion effects
-import { SyncLoader } from 'react-spinners'; // Importing a spinner loader component for async operations
+import React, { useEffect, useRef, useState } from "react";
+import {
+  ArrowLeft,
+  EyeOff,
+  Eye,
+  X,
+  Check,
+  Mail,
+  User,
+  Lock,
+  AlertCircle,
+  CheckCircle2,
+} from "lucide-react";
+import OAuth from "../components/OAuth";
+import { Link, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { SyncLoader } from "react-spinners";
 
 const SignUp = ({ length = 4 }) => {
-	const [passwordVisible, setPasswordVisible] = useState(false);
-	const [confirmPassword, setConfirmPassword] = useState(false);
-	const [errorMessage, setErrorMessage] = useState(null);
-	const [modalMessage, setModalMessage] = useState(null);
-	const [showModal, setShowModal] = useState(false);
-	const [loading, setLoading] = useState(false);
-	const [verificationModal, setVerificationModal] = useState(false);
-	const [step, setStep] = useState(1);
-	const [otp, setOtp] = useState(new Array(length).fill(''));
-	const inputRefs = useRef([]);
-	const navigate = useNavigate();
-	const [agree, setAgree] = useState(false);
-	const [formData, setFormData] = useState({});
-	const [password, setPassword] = useState('');
-	const [strength, setStrength] = useState('weak');
-	const [strengthConditions, setStrengthConditions] = useState({
-		length: false,
-		uppercase: false,
-		lowercase: false,
-		number: false,
-		specialChar: false,
-	}); // Conditions for password strength
+  // State management
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [modalMessage, setModalMessage] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [verificationModal, setVerificationModal] = useState(false);
+  const [step, setStep] = useState(1);
+  const [otp, setOtp] = useState(new Array(length).fill(""));
+  const [agree, setAgree] = useState(false);
+  const [formData, setFormData] = useState({});
+  const [password, setPassword] = useState("");
+  const [strength, setStrength] = useState("weak");
+  const [strengthConditions, setStrengthConditions] = useState({
+    length: false,
+    uppercase: false,
+    lowercase: false,
+    number: false,
+    specialChar: false,
+  });
 
-	const passwordRef = useRef(null); // Ref for password field
+  // Refs
+  const inputRefs = useRef([]);
+  const passwordRef = useRef(null);
+  const navigate = useNavigate();
 
-	// Function to handle password input change and validate its strength
-	const handlePasswordChange = (e) => {
-		const value = e.target.value;
-		setPassword(value); // Update password state
-		setFormData({ ...formData, password: value }); // Update form data
+  // Password strength handling
+  const handlePasswordChange = (e) => {
+    const value = e.target.value;
+    setPassword(value);
+    setFormData({ ...formData, password: value });
 
-		// Password strength conditions
-		const conditions = {
-			length: value.length >= 8,
-			uppercase: /[A-Z]/.test(value),
-			lowercase: /[a-z]/.test(value),
-			number: /[0-9]/.test(value),
-			specialChar: /[!@#$%^&*(),.?":{}|<>]/.test(value),
-		};
+    const conditions = {
+      length: value.length >= 8,
+      uppercase: /[A-Z]/.test(value),
+      lowercase: /[a-z]/.test(value),
+      number: /[0-9]/.test(value),
+      specialChar: /[!@#$%^&*(),.?":{}|<>]/.test(value),
+    };
 
-		setStrengthConditions(conditions); // Update conditions
+    setStrengthConditions(conditions);
 
-		// Calculate strength based on conditions
-		const satisfiedConditions =
-			Object.values(conditions).filter(Boolean).length;
-		if (satisfiedConditions <= 2) setStrength('weak');
-		else if (satisfiedConditions === 3 || satisfiedConditions === 4)
-			setStrength('good');
-		else if (satisfiedConditions === 5) setStrength('strong');
-	};
+    const satisfiedConditions =
+      Object.values(conditions).filter(Boolean).length;
+    if (satisfiedConditions <= 2) setStrength("weak");
+    else if (satisfiedConditions === 3 || satisfiedConditions === 4)
+      setStrength("good");
+    else if (satisfiedConditions === 5) setStrength("strong");
+  };
 
-	// Function to handle form data changes (name, email, etc.)
-	const handleChange = (e) => {
-		setFormData({ ...formData, [e.target.id]: e.target.value.trim() }); // Update form data with trimmed values
-	};
+  // Form handling
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
+  };
 
-	// Function to toggle agreement to terms and conditions
-	const agreeToTerms = () => {
-		setAgree(!agree); // Toggle agreement state
-	};
+  const agreeToTerms = () => {
+    setAgree(!agree);
+  };
 
-	// Function to handle the form submission
-	const handleSubmit = async (e) => {
-		e.preventDefault(); // Prevent default form submission
-		console.log('This is formData', formData);
-		// Validate that all fields are filled
-		if (
-			!formData.firstName ||
-			!formData.lastName ||
-			!formData.email ||
-			!formData.password ||
-			!formData.confirm
-		) {
-			setErrorMessage('Kindly fill out all fields.');
-			setShowModal(true); // Show error modal
-			return;
-		}
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("This is formData", formData);
 
-		// Ensure passwords match
-		if (formData.password !== formData.confirm) {
-			setErrorMessage('Kindly confirm your password');
-			setShowModal(true); // Show error modal
-			return;
-		}
+    if (
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.email ||
+      !formData.password ||
+      !formData.confirm
+    ) {
+      setErrorMessage("Please fill out all fields.");
+      setShowModal(true);
+      return;
+    }
 
-		// Ensure the user agrees to terms
-		if (agree === false) {
-			setErrorMessage('Kindly agree to our privacy policy');
-			setShowModal(true); // Show error modal
-			return;
-		}
+    if (formData.password !== formData.confirm) {
+      setErrorMessage("Passwords do not match.");
+      setShowModal(true);
+      return;
+    }
 
-		// Perform signup API request
-		try {
-			setLoading(true);
-			setErrorMessage(null); // Reset error message
+    if (agree === false) {
+      setErrorMessage("Please agree to our privacy policy.");
+      setShowModal(true);
+      return;
+    }
 
-			const res = await fetch('/api/auth/signup', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(formData),
-			});
-			const data = await res.json();
+    try {
+      setLoading(true);
+      setErrorMessage(null);
 
-			// If signup fails, show the error message
-			if (data.success === false) {
-				setErrorMessage(data.message);
-				setShowModal(true); // Show error modal
-				setLoading(false);
-				return;
-			}
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
 
-			setLoading(false);
-			setVerificationModal(true); // Show OTP verification modal after successful signup
-		} catch (error) {
-			console.log('This is error', error);
-			setErrorMessage(error.message);
-			setLoading(false);
-			console.log(error);
-			setShowModal(true); // Show error modal
-		}
-	};
+      if (data.success === false) {
+        setErrorMessage(data.message);
+        setShowModal(true);
+        setLoading(false);
+        return;
+      }
 
-	// Function to verify OTP entered by the user
-	const handleVerifyOTP = async () => {
-		const otpString = otp.join(''); // Join OTP digits to form a string
+      setLoading(false);
+      setVerificationModal(true);
+    } catch (error) {
+      console.log("This is error", error);
+      setErrorMessage(error.message);
+      setLoading(false);
+      console.log(error);
+      setShowModal(true);
+    }
+  };
 
-		// Validate OTP length
-		if (otpString.length !== length) {
-			setModalMessage(`Code must be ${length} digits`);
-			return;
-		}
+  // OTP verification
+  const handleVerifyOTP = async () => {
+    const otpString = otp.join("");
 
-		try {
-			const res = await fetch('/api/auth/verify-otp', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ email: formData.email, code: otpString }),
-			});
+    if (otpString.length !== length) {
+      setModalMessage(`Code must be ${length} digits`);
+      return;
+    }
 
-			const data = await res.json();
+    try {
+      const res = await fetch("/api/auth/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: formData.email, code: otpString }),
+      });
 
-			// If OTP verification succeeds, move to the next step
-			if (data.success) {
-				setStep(2); // Move to step 2 (successful verification)
-			} else {
-				setModalMessage(data.message); // Show error message if OTP verification fails
-				console.log(data);
-			}
-		} catch (error) {
-			setErrorMessage('Error verifying OTP. Please try again.');
-			setShowModal(true); // Show error modal
-		}
-	};
+      const data = await res.json();
 
-	// Function to resend OTP if the user requests it
-	const handleResendOTP = async () => {
-		try {
-			const res = await fetch('/api/auth/resend-otp', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					email: formData.email,
-					firstName: formData.firstName,
-				}),
-			});
+      if (data.success) {
+        setStep(2);
+      } else {
+        setModalMessage(data.message);
+        console.log(data);
+      }
+    } catch (error) {
+      setErrorMessage("Error verifying OTP. Please try again.");
+      setShowModal(true);
+    }
+  };
 
-			const data = await res.json();
+  const handleResendOTP = async () => {
+    try {
+      const res = await fetch("/api/auth/resend-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: formData.email,
+          firstName: formData.firstName,
+        }),
+      });
 
-			// If resending OTP fails, show an error
-			if (!data.success) {
-				setErrorMessage('Error resending OTP. Please try again.');
-				setShowModal(true);
-			}
-		} catch (error) {
-			setErrorMessage('Error resending OTP. Please try again.');
-			setShowModal(true);
-		}
-	};
+      const data = await res.json();
 
-	// Function to handle changes in OTP input fields
-	const handleOtpChange = (index, e) => {
-		const value = e.target.value;
-		if (isNaN(value)) return; // Only allow numbers
+      if (!data.success) {
+        setErrorMessage("Error resending OTP. Please try again.");
+        setShowModal(true);
+      } else {
+        // Show success toast
+        setModalMessage("Verification code resent successfully");
+        setTimeout(() => setModalMessage(null), 3000);
+      }
+    } catch (error) {
+      setErrorMessage("Error resending OTP. Please try again.");
+      setShowModal(true);
+    }
+  };
 
-		const newOtp = [...otp];
-		newOtp[index] = value.substring(value.length - 1); // Ensure only the last digit is used
-		setOtp(newOtp);
+  // OTP input handling
+  const handleOtpChange = (index, e) => {
+    const value = e.target.value;
+    if (isNaN(value)) return;
 
-		// Move focus to the next input if the current one is filled
-		if (value && index < length - 1 && inputRefs.current[index + 1]) {
-			inputRefs.current[index + 1].focus();
-		}
-	};
+    const newOtp = [...otp];
+    newOtp[index] = value.substring(value.length - 1);
+    setOtp(newOtp);
 
-	// Function to handle focus on an OTP input field when clicked
-	const handleClick = (index) => {
-		inputRefs.current[index].setSelectionRange(1, 1); // Set cursor position
+    if (value && index < length - 1 && inputRefs.current[index + 1]) {
+      inputRefs.current[index + 1].focus();
+    }
+  };
 
-		// Move focus if the previous OTP input is empty
-		if (index > 0 && !otp[index - 1]) {
-			inputRefs.current[otp.indexOf('')].focus();
-		}
-	};
+  const handleClick = (index) => {
+    inputRefs.current[index].setSelectionRange(1, 1);
 
-	// Function to handle backspace behavior for OTP input
-	const handleKeyDown = (index, e) => {
-		if (
-			e.key === 'Backspace' &&
-			!otp[index] &&
-			index > 0 &&
-			inputRefs.current[index - 1]
-		) {
-			inputRefs.current[index - 1].focus(); // Move focus to the previous input
-		}
-	};
+    if (index > 0 && !otp[index - 1]) {
+      inputRefs.current[otp.indexOf("")].focus();
+    }
+  };
 
-	// Function to navigate to the previous page
-	const return_to_previous_page = () => {
-		navigate(-1); // Navigate back to the previous page
-	};
+  const handleKeyDown = (index, e) => {
+    if (
+      e.key === "Backspace" &&
+      !otp[index] &&
+      index > 0 &&
+      inputRefs.current[index - 1]
+    ) {
+      inputRefs.current[index - 1].focus();
+    }
+  };
 
-	// Focus on the first OTP input field when the modal is shown
-	useEffect(() => {
-		if (verificationModal && inputRefs.current[0]) {
-			const timer = setTimeout(() => {
-				inputRefs.current[0].focus(); // Focus on the first OTP input field
-			}, 300); // Delay to allow modal animation
+  const return_to_previous_page = () => {
+    navigate(-1);
+  };
 
-			return () => {
-				clearTimeout(timer); // Cleanup the timer on unmount
-			};
-		}
-	}, [verificationModal]);
+  // Effects
+  useEffect(() => {
+    if (verificationModal && inputRefs.current[0]) {
+      const timer = setTimeout(() => {
+        inputRefs.current[0].focus();
+      }, 300);
 
-	// Auto-close the modal after 3 seconds if it's showing
-	useEffect(() => {
-		if (showModal || loading || modalMessage) {
-			const timer = setTimeout(() => {
-				setShowModal(false); // Hide modal
-				setLoading(false); // Reset loading state
-				setModalMessage(null); // Clear modal message
-			}, 3000); // Auto-close after 3 seconds
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+  }, [verificationModal]);
 
-			return () => clearTimeout(timer); // Cleanup the timer if modal is manually closed
-		}
-	}, [showModal, loading, modalMessage]);
+  useEffect(() => {
+    if (showModal || loading || modalMessage) {
+      const timer = setTimeout(() => {
+        setShowModal(false);
+        setLoading(false);
+        setModalMessage(null);
+      }, 3000);
 
-	// Close password strength checker if clicked outside the password field
-	useEffect(() => {
-		const close_password_strength_checker = (event) => {
-			if (passwordRef.current && !passwordRef.current.contains(event.target)) {
-				setPassword(false); // Close password strength checker
-			}
-		};
+      return () => clearTimeout(timer);
+    }
+  }, [showModal, loading, modalMessage]);
 
-		document.addEventListener('mousedown', close_password_strength_checker); // Listen for click events
+  useEffect(() => {
+    const close_password_strength_checker = (event) => {
+      if (passwordRef.current && !passwordRef.current.contains(event.target)) {
+        setPassword(false);
+      }
+    };
 
-		return () => {
-			document.removeEventListener(
-				'mousedown',
-				close_password_strength_checker
-			); // Cleanup listener
-		};
-	}, []);
+    document.addEventListener("mousedown", close_password_strength_checker);
 
-	return (
-		<motion.div
-			initial={{ opacity: 0 }}
-			animate={{ opacity: 1 }}
-			exit={{ opacity: 0 }}
-			transition={{
-				duration: 0.5,
-				ease: 'easeInOut',
-			}}
-			className='w-full py-10 flex items-center justify-between relative bg-white'>
-			<div
-				className='absolute sm:left-5 sm:top-5 top-2 left-1 hover:bg-[#48aadf13] sm:p-3 p-2 rounded-full cursor-pointer text-[#48aadf] transition-colors duration-300 ease-in-out'
-				onClick={return_to_previous_page}>
-				{/* Back button that navigates to the previous page */}
-				<ArrowLeft />
-			</div>
+    return () => {
+      document.removeEventListener(
+        "mousedown",
+        close_password_strength_checker
+      );
+    };
+  }, []);
 
-			<div className='flex flex-col items-center gap-5 w-full'>
-				{/* Header Section */}
-				<h1 className='sm:text-3xl text-2xl font-medium'>Create an account</h1>
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: "easeOut",
+      },
+    },
+    exit: {
+      opacity: 0,
+      y: -20,
+      transition: {
+        duration: 0.3,
+      },
+    },
+  };
 
-				<div className='flex flex-col items-center gap-5 w-96 max-w-[90%]'>
-					{/* OAuth Sign Up */}
-					<OAuth label={'Sign up with Google'} />
-					<p>or</p>
+  const fadeIn = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: 0.3,
+      },
+    },
+    exit: {
+      opacity: 0,
+      transition: {
+        duration: 0.2,
+      },
+    },
+  };
 
-					{/* Form for account creation */}
-					<form
-						className='flex flex-col gap-3 w-full'
-						onSubmit={handleSubmit}>
-						{/* Name Fields (First and Last Name) */}
-						<div className='flex items-center gap-4'>
-							<input
-								type='text'
-								id='firstName'
-								onChange={handleChange}
-								className='rounded-full px-8 py-4 bg-[#48aadf13] w-full'
-								placeholder='First name'
-								autoComplete='off'
-							/>
-							<input
-								type='text'
-								id='lastName'
-								onChange={handleChange}
-								className='rounded-full px-8 py-4 bg-[#48aadf13] w-full'
-								placeholder='Last name'
-								autoComplete='off'
-							/>
-						</div>
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-gray-50 py-16 px-4 flex items-center justify-center relative">
+      {/* Back Button */}
+      <button
+        className="absolute left-4 top-4 sm:left-8 sm:top-8 flex items-center justify-center w-10 h-10 rounded-full bg-white shadow-sm hover:bg-blue-50 transition-colors"
+        onClick={return_to_previous_page}
+        aria-label="Go back"
+      >
+        <ArrowLeft size={20} className="text-blue-600" />
+      </button>
 
-						{/* Email input */}
-						<input
-							type='email'
-							name='email'
-							id='email'
-							onChange={handleChange}
-							className='rounded-full px-8 py-4 bg-[#48aadf13] w-full'
-							placeholder='Email'
-							autoComplete='off'
-						/>
+      {/* Main Container */}
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        className="w-full max-w-md"
+      >
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden p-8 sm:p-10">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Create an Account
+            </h1>
+            <p className="text-gray-600">
+              Join us for a better travel experience
+            </p>
+          </div>
 
-						{/* Password Input with visibility toggle */}
-						<div
-							className=''
-							ref={passwordRef}>
-							<div className='rounded-full w-full relative'>
-								<input
-									type={passwordVisible ? 'text' : 'password'}
-									id='password'
-									onChange={handlePasswordChange}
-									onFocus={() => setPassword(true)}
-									className='w-full h-full px-8 py-4 rounded-full bg-[#48aadf13]'
-									placeholder='Password'
-									autoComplete='off'
-								/>
-								{/* Eye icon for password visibility toggle */}
-								<span
-									className='absolute right-5 top-1/2 transform -translate-y-1/2 cursor-pointer'
-									onClick={() => setPasswordVisible(!passwordVisible)}>
-									{passwordVisible ? (
-										<EyeClosedIcon className='p-0.5' />
-									) : (
-										<EyeIcon className='p-0.5' />
-									)}
-								</span>
-							</div>
+          {/* OAuth and Divider */}
+          <div className="mb-8">
+            <OAuth label={"Sign up with Google"} />
+            <div className="relative mt-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-200"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-4 bg-white text-gray-500">
+                  or with email
+                </span>
+              </div>
+            </div>
+          </div>
 
-							{/* Password Strength Indicator */}
-							<div
-								className={`mt-2 transition-all duration-700 ease-in-out overflow-hidden 
-                  ${password ? 'h-36' : 'h-0'}`}>
-								<p
-									className={`text-sm 
-                    ${
-											strength === 'weak'
-												? 'text-red-500'
-												: strength === 'good'
-												? 'text-[#f89a00]'
-												: 'text-green-500'
-										}`}>
-									Password Strength:{' '}
-									{strength.charAt(0).toUpperCase() + strength.slice(1)}
-								</p>
+          {/* Sign Up Form */}
+          <form className="space-y-5" onSubmit={handleSubmit}>
+            {/* Name Fields */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label
+                  htmlFor="firstName"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  First Name
+                </label>
+                <div className="relative rounded-lg">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <User size={18} className="text-gray-400" />
+                  </div>
+                  <input
+                    type="text"
+                    id="firstName"
+                    onChange={handleChange}
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors"
+                    placeholder="John"
+                    autoComplete="off"
+                  />
+                </div>
+              </div>
+              <div>
+                <label
+                  htmlFor="lastName"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Last Name
+                </label>
+                <div className="relative rounded-lg">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <User size={18} className="text-gray-400" />
+                  </div>
+                  <input
+                    type="text"
+                    id="lastName"
+                    onChange={handleChange}
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors"
+                    placeholder="Doe"
+                    autoComplete="off"
+                  />
+                </div>
+              </div>
+            </div>
 
-								{/* Strength bar for password */}
-								<div className='flex gap-1 mt-2'>
-									<div
-										className={`h-1 w-14 rounded transition-colors duration-300 ease-in-out 
-                    ${
-											strengthConditions.length ? 'bg-[#48aadf]' : 'bg-gray-300'
-										}`}
-									/>
-									<div
-										className={`h-1 w-14 rounded transition-colors duration-300 ease-in-out 
-                    ${
-											strengthConditions.uppercase
-												? 'bg-[#48aadf]'
-												: 'bg-gray-300'
-										}`}
-									/>
-									<div
-										className={`h-1 w-14 rounded transition-colors duration-300 ease-in-out 
-                    ${
-											strengthConditions.lowercase
-												? 'bg-[#48aadf]'
-												: 'bg-gray-300'
-										}`}
-									/>
-									<div
-										className={`h-1 w-14 rounded transition-colors duration-300 ease-in-out 
-                    ${
-											strengthConditions.number ? 'bg-[#48aadf]' : 'bg-gray-300'
-										}`}
-									/>
-									<div
-										className={`h-1 w-14 rounded transition-colors duration-300 ease-in-out 
-                    ${
-											strengthConditions.specialChar
-												? 'bg-[#48aadf]'
-												: 'bg-gray-300'
-										}`}
-									/>
-								</div>
+            {/* Email Input */}
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Email Address
+              </label>
+              <div className="relative rounded-lg">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Mail size={18} className="text-gray-400" />
+                </div>
+                <input
+                  type="email"
+                  id="email"
+                  onChange={handleChange}
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors"
+                  placeholder="your@email.com"
+                  autoComplete="off"
+                />
+              </div>
+            </div>
 
-								{/* Password criteria list */}
-								<ul className='mt-2 text-sm font-serif'>
-									<li
-										className={`transition-colors duration-300 ease-in-out 
-                    ${
-											strengthConditions.length
-												? 'text-[#1158a6]'
-												: 'text-gray-500'
-										}`}>
-										At least 8 characters
-									</li>
-									<li
-										className={`transition-colors duration-300 ease-in-out 
-                    ${
-											strengthConditions.uppercase
-												? 'text-[#1158a6]'
-												: 'text-gray-500'
-										}`}>
-										At least one uppercase letter
-									</li>
-									<li
-										className={`transition-colors duration-300 ease-in-out 
-                    ${
-											strengthConditions.lowercase
-												? 'text-[#1158a6]'
-												: 'text-gray-500'
-										}`}>
-										At least one lowercase letter
-									</li>
-									<li
-										className={`transition-colors duration-300 ease-in-out 
-                    ${
-											strengthConditions.number
-												? 'text-[#1158a6]'
-												: 'text-gray-500'
-										}`}>
-										At least one number
-									</li>
-									<li
-										className={`transition-colors duration-300 ease-in-out 
-                    ${
-											strengthConditions.specialChar
-												? 'text-[#1158a6]'
-												: 'text-gray-500'
-										}`}>
-										At least one special character
-									</li>
-								</ul>
-							</div>
-						</div>
+            {/* Password Input */}
+            <div ref={passwordRef}>
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Password
+              </label>
+              <div className="relative rounded-lg">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Lock size={18} className="text-gray-400" />
+                </div>
+                <input
+                  type={passwordVisible ? "text" : "password"}
+                  id="password"
+                  onChange={handlePasswordChange}
+                  onFocus={() => setPassword(true)}
+                  className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors"
+                  placeholder="••••••••"
+                  autoComplete="off"
+                />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  onClick={() => setPasswordVisible(!passwordVisible)}
+                  aria-label={
+                    passwordVisible ? "Hide password" : "Show password"
+                  }
+                >
+                  {passwordVisible ? (
+                    <EyeOff
+                      size={18}
+                      className="text-gray-500 hover:text-gray-700"
+                    />
+                  ) : (
+                    <Eye
+                      size={18}
+                      className="text-gray-500 hover:text-gray-700"
+                    />
+                  )}
+                </button>
+              </div>
 
-						{/* Confirm Password Input with visibility toggle */}
-						<div className='rounded-full w-full relative'>
-							<input
-								type={confirmPassword ? 'text' : 'password'}
-								id='confirm'
-								onChange={handleChange}
-								className='w-full h-full px-8 py-4 rounded-full bg-[#48aadf13]'
-								placeholder='Confirm password'
-								autoComplete='off'
-							/>
-							{/* Eye icon for confirm password visibility toggle */}
-							<span
-								className='absolute right-5 top-1/2 transform -translate-y-1/2 cursor-pointer text-xl'
-								onClick={() => setConfirmPassword(!confirmPassword)}>
-								{confirmPassword ? (
-									<EyeClosedIcon className='p-0.5' />
-								) : (
-									<EyeIcon className='p-0.5' />
-								)}
-							</span>
-						</div>
+              <AnimatePresence>
+                {password && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="mt-3 bg-gray-50 p-4 rounded-lg border border-gray-200"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium">
+                        Password strength:
+                      </span>
+                      <span
+                        className={`text-sm font-medium ${
+                          strength === "weak"
+                            ? "text-red-500"
+                            : strength === "good"
+                            ? "text-amber-500"
+                            : "text-green-500"
+                        }`}
+                      >
+                        {strength.charAt(0).toUpperCase() + strength.slice(1)}
+                      </span>
+                    </div>
+                    <div className="h-2 w-full bg-gray-200 rounded-full mb-4 overflow-hidden">
+                      <div
+                        className={`h-full ${
+                          strength === "weak"
+                            ? "bg-red-500 w-1/3"
+                            : strength === "good"
+                            ? "bg-amber-500 w-2/3"
+                            : "bg-green-500 w-full"
+                        } transition-all duration-300`}
+                      />
+                    </div>
 
-						{/* Terms of Service Agreement */}
-						<div className='flex items-center'>
-							<input
-								type='checkbox'
-								id='rememberMe'
-								checked={agree}
-								onClick={agreeToTerms}
-								onChange={handleChange}
-								className='hidden' // Hide the default checkbox
-							/>
-							<label
-								htmlFor='rememberMe'
-								className='flex items-center cursor-pointer'>
-								{/* Custom checkbox design */}
-								<div
-									className={`relative w-4 h-4 flex items-center justify-center rounded border-2 transition-all duration-300
-                    ${
-											agree ? 'border-[#4078bc] bg-[#4078bc]' : 'border-black'
-										}`}>
-									<svg
-										xmlns='http://www.w3.org/2000/svg'
-										className={`absolute w-3.5 h-3.5 text-white transition-opacity duration-300 
-                      ${agree ? 'opacity-100' : 'opacity-0'}`}
-										viewBox='0 0 24 24'
-										fill='none'
-										stroke='currentColor'
-										strokeWidth='3'>
-										<path
-											strokeLinecap='round'
-											strokeLinejoin='round'
-											d='M5 13l4 4L19 7'
-										/>
-									</svg>
-								</div>
-								<span className='ml-2 text-black text-sm flex items-center gap-1'>
-									<p>Agree to our</p>
-									<Link
-										to='/policy'
-										className='text-[#4078bc] hover:underline transition-all duration-300 ease-in-out'>
-										Privacy Policy
-									</Link>
-								</span>
-							</label>
-						</div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <div className="flex items-center">
+                        <div
+                          className={`flex-shrink-0 h-5 w-5 rounded-full flex items-center justify-center ${
+                            strengthConditions.length
+                              ? "bg-green-100 text-green-600"
+                              : "bg-gray-100 text-gray-400"
+                          }`}
+                        >
+                          {strengthConditions.length ? <Check size={12} /> : ""}
+                        </div>
+                        <span
+                          className={`ml-2 text-xs ${
+                            strengthConditions.length
+                              ? "text-gray-700"
+                              : "text-gray-500"
+                          }`}
+                        >
+                          At least 8 characters
+                        </span>
+                      </div>
 
-						{/* Submit Button */}
-						<button
-							type='submit'
-							disabled={strength !== 'strong'}
-							className={`w-full py-3 text-white rounded-full border-none outline-none mt-5 flex items-center justify-center gap-2 transition-all duration-300 ease-in-out 
-                ${
-									strength !== 'strong' || loading
-										? 'bg-[#48aadf96] cursor-not-allowed'
-										: 'bg-[#48aadf] cursor-pointer'
-								}`}>
-							<p>
-								{loading ? (
-									<SyncLoader
-										color='#fff' // Customize the color
-										loading={loading}
-										size={7} // Customize the size
-										margin={2} // Customize the margin between circles
-									/>
-								) : (
-									'Continue'
-								)}
-							</p>
-						</button>
-					</form>
-				</div>
+                      <div className="flex items-center">
+                        <div
+                          className={`flex-shrink-0 h-5 w-5 rounded-full flex items-center justify-center ${
+                            strengthConditions.uppercase
+                              ? "bg-green-100 text-green-600"
+                              : "bg-gray-100 text-gray-400"
+                          }`}
+                        >
+                          {strengthConditions.uppercase ? (
+                            <Check size={12} />
+                          ) : (
+                            ""
+                          )}
+                        </div>
+                        <span
+                          className={`ml-2 text-xs ${
+                            strengthConditions.uppercase
+                              ? "text-gray-700"
+                              : "text-gray-500"
+                          }`}
+                        >
+                          One uppercase letter
+                        </span>
+                      </div>
 
-				{/* Link to sign in page if the user already has an account */}
-				<div className='flex items-center gap-2 w-full justify-center'>
-					<p>Already have an account? </p>
-					<Link
-						to='/signin'
-						className='text-[#4078bc] hover:underline transition-all duration-300 ease-in-out'>
-						sign in
-					</Link>
-				</div>
-			</div>
+                      <div className="flex items-center">
+                        <div
+                          className={`flex-shrink-0 h-5 w-5 rounded-full flex items-center justify-center ${
+                            strengthConditions.lowercase
+                              ? "bg-green-100 text-green-600"
+                              : "bg-gray-100 text-gray-400"
+                          }`}
+                        >
+                          {strengthConditions.lowercase ? (
+                            <Check size={12} />
+                          ) : (
+                            ""
+                          )}
+                        </div>
+                        <span
+                          className={`ml-2 text-xs ${
+                            strengthConditions.lowercase
+                              ? "text-gray-700"
+                              : "text-gray-500"
+                          }`}
+                        >
+                          One lowercase letter
+                        </span>
+                      </div>
 
-			<AnimatePresence>
-				{showModal && (
-					<motion.div
-						// Motion animation for fade in and fade out effect when modal appears/disappears
-						initial={{ opacity: 0 }} // Modal starts with opacity 0 (invisible)
-						animate={{ opacity: 1 }} // Modal animates to full opacity (visible)
-						exit={{ opacity: 0 }} // Modal fades out when exiting
-						transition={{
-							duration: 0.5, // The duration of the fade effect
-							ease: 'easeInOut', // The easing function to smoothen the transition
-						}}
-						className='fixed left-0 right-0 top-0 bottom-0 z-[10001] bg-black/25 flex items-center justify-center'
-						// Fixed position to cover the entire screen with a transparent black overlay
-					>
-						<motion.div
-							initial={{ opacity: 0 }} // Modal content starts with opacity 0
-							animate={{ opacity: 1 }} // Modal content fades in to full opacity
-							exit={{ opacity: 0 }} // Modal content fades out when exiting
-							transition={{
-								duration: 0.5,
-								ease: 'easeInOut',
-							}}
-							className='relative bg-white p-5 pt-8 rounded-xl .transition-all { transition: all 0.3s ease-in-out; } w-64 max-w-[90%] flex justify-center items-center flex-col gap-4'
-							// Styles for the modal content: white background, padding, rounded corners, and flexible layout
-						>
-							<X
-								className='cursor-pointer text-black absolute left-2 top-2 p-2 rounded-full text-[2rem] bg-[#48aadf13] w-8 h-8'
-								onClick={() => setShowModal(false)} // Closes the modal when clicked
-							/>
-							<p className='font-serif pt-2 text-center'>{errorMessage}</p>
-							<motion.div className='actions'>
-								<button
-									type='button'
-									className='bg-[#48aadf] py-2 px-5 text-white cursor-pointer rounded-full transition-all duration-300 ease-in-out shrink-button'
-									onClick={() => setShowModal(false)} // Closes the modal when clicked
-								>
-									OK
-								</button>
-							</motion.div>
-						</motion.div>
-					</motion.div>
-				)}
-			</AnimatePresence>
+                      <div className="flex items-center">
+                        <div
+                          className={`flex-shrink-0 h-5 w-5 rounded-full flex items-center justify-center ${
+                            strengthConditions.number
+                              ? "bg-green-100 text-green-600"
+                              : "bg-gray-100 text-gray-400"
+                          }`}
+                        >
+                          {strengthConditions.number ? <Check size={12} /> : ""}
+                        </div>
+                        <span
+                          className={`ml-2 text-xs ${
+                            strengthConditions.number
+                              ? "text-gray-700"
+                              : "text-gray-500"
+                          }`}
+                        >
+                          One number
+                        </span>
+                      </div>
 
-			{/* Modal for verifying email address */}
-			<AnimatePresence>
-				{verificationModal && (
-					<motion.div
-						initial={{ opacity: 0 }} // Starts with opacity 0
-						animate={{ opacity: 1 }} // Fades in to full opacity
-						exit={{ opacity: 0 }} // Fades out when exiting
-						className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center'
-						// Fixed position with black transparent background covering the entire screen
-					>
-						<motion.div
-							key={step} // Animates based on the current step (helps with rerendering the modal on step change)
-							initial={{ opacity: 0 }} // Modal starts with opacity 0
-							animate={{ opacity: 1 }} // Fades in to full opacity
-							exit={{ opacity: 0 }} // Fades out when exiting
-							transition={{
-								duration: 0.5,
-								ease: 'easeInOut',
-							}}
-							className='bg-[#ECECEC] px-6 pt-8 pb-6 rounded-lg relative flex flex-col justify-center items-center gap-1 w-64 max-w-[90%]'
-							// Styles for modal content: light gray background, padding, rounded corners, and flex layout
-						>
-							<X
-								className='cursor-pointer text-black absolute left-2 top-2 p-2 rounded-full text-[2rem] bg-[#48aadf13] w-8 h-8'
-								onClick={() => setVerificationModal(false)} // Closes the verification modal
-							/>
-							{/* Conditional rendering based on step */}
-							{step === 1 && (
-								<>
-									<div className='font-serif text-xl mb-2'>Enter OTP</div>
-									<div className='flex gap-5'>
-										{/* OTP input fields */}
-										{otp.map((value, index) => (
-											<input
-												key={index}
-												ref={(input) => (inputRefs.current[index] = input)} // Sets refs for each input
-												type='text'
-												value={value}
-												onChange={(e) => handleOtpChange(index, e)} // Handles OTP input change
-												onClick={() => handleClick(index)} // Handles click on OTP input
-												onKeyDown={(e) => handleKeyDown(index, e)} // Handles keydown for navigating inputs
-												className='border border-gray-400 w-8 h-8 rounded-md bg-transparent outline-none text-center'
-												// Styles for OTP inputs
-											/>
-										))}
-									</div>
-									{/* Display error message if any */}
-									{modalMessage && (
-										<motion.p
-											initial={{ opacity: 0, y: -10 }}
-											animate={{ opacity: 1, y: 0 }}
-											exit={{ opacity: 0, y: -10 }}
-											transition={{
-												duration: 0.5,
-												ease: 'easeInOut',
-											}}
-											className='text-[0.7rem] text-red-500'>
-											{modalMessage} {/* Display error message */}
-										</motion.p>
-									)}
-									{/* Resend OTP option */}
-									<div
-										className='cursor-pointer text-[#4078bc] text-sm'
-										onClick={handleResendOTP}>
-										Resend OTP
-									</div>
-									{/* Verify OTP button */}
-									<button
-										type='button'
-										className='bg-[#48aadf] text-white py-2 px-5 rounded-full cursor-pointer outline-none mt-3 text-sm 
-                      transition-all duration-300 ease-in-out shrink-button'
-										onClick={handleVerifyOTP} // Verifies OTP
-									>
-										verify
-									</button>
-								</>
-							)}
+                      <div className="flex items-center">
+                        <div
+                          className={`flex-shrink-0 h-5 w-5 rounded-full flex items-center justify-center ${
+                            strengthConditions.specialChar
+                              ? "bg-green-100 text-green-600"
+                              : "bg-gray-100 text-gray-400"
+                          }`}
+                        >
+                          {strengthConditions.specialChar ? (
+                            <Check size={12} />
+                          ) : (
+                            ""
+                          )}
+                        </div>
+                        <span
+                          className={`ml-2 text-xs ${
+                            strengthConditions.specialChar
+                              ? "text-gray-700"
+                              : "text-gray-500"
+                          }`}
+                        >
+                          One special character
+                        </span>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
 
-							{/* Step 2: Account creation success */}
-							{step === 2 && (
-								<>
-									<p className='text-center font-serif'>
-										Your account has been successfully created
-									</p>
-									<div>
-										{/* Sign in button after successful account creation */}
-										<button
-											type='button'
-											onClick={() => {
-												setVerificationModal(false); // Closes the modal
-												setTimeout(() => {
-													navigate('/signin'); // Redirects to the sign-in page after 1 second
-												}, 1000);
-											}}
-											className='bg-[#48aadf] text-white py-2 px-5 rounded-full cursor-pointer outline-none mt-3 text-sm transition-all duration-300 ease-in-out shrink-button'>
-											sign in
-										</button>
-									</div>
-								</>
-							)}
-						</motion.div>
-					</motion.div>
-				)}
-			</AnimatePresence>
-		</motion.div>
-	);
+            {/* Confirm Password */}
+            <div>
+              <label
+                htmlFor="confirm"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Confirm Password
+              </label>
+              <div className="relative rounded-lg">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Lock size={18} className="text-gray-400" />
+                </div>
+                <input
+                  type={confirmPasswordVisible ? "text" : "password"}
+                  id="confirm"
+                  onChange={handleChange}
+                  className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors"
+                  placeholder="••••••••"
+                  autoComplete="off"
+                />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  onClick={() =>
+                    setConfirmPasswordVisible(!confirmPasswordVisible)
+                  }
+                  aria-label={
+                    confirmPasswordVisible ? "Hide password" : "Show password"
+                  }
+                >
+                  {confirmPasswordVisible ? (
+                    <EyeOff
+                      size={18}
+                      className="text-gray-500 hover:text-gray-700"
+                    />
+                  ) : (
+                    <Eye
+                      size={18}
+                      className="text-gray-500 hover:text-gray-700"
+                    />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Terms Agreement */}
+            <div className="flex items-center">
+              <div className="relative inline-flex items-center">
+                <input
+                  type="checkbox"
+                  id="rememberMe"
+                  checked={agree}
+                  onChange={agreeToTerms}
+                  className="sr-only"
+                />
+                <div
+                  onClick={agreeToTerms}
+                  className={`w-5 h-5 rounded border transition-colors cursor-pointer flex items-center justify-center ${
+                    agree
+                      ? "bg-blue-600 border-blue-600"
+                      : "border-gray-300 bg-white"
+                  }`}
+                >
+                  {agree && <Check size={14} className="text-white" />}
+                </div>
+                <label
+                  htmlFor="rememberMe"
+                  className="ml-2 cursor-pointer select-none"
+                >
+                  <span className="text-sm text-gray-700">
+                    I agree to the{" "}
+                    <Link
+                      to="/policy"
+                      className="font-medium text-blue-600 hover:text-blue-800 transition-colors"
+                    >
+                      Privacy Policy
+                    </Link>
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={strength !== "strong" || loading}
+              className={`w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white ${
+                strength !== "strong" || loading
+                  ? "bg-blue-300 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              } transition-colors duration-300`}
+            >
+              {loading ? (
+                <SyncLoader
+                  color="#ffffff"
+                  loading={loading}
+                  size={8}
+                  margin={4}
+                />
+              ) : (
+                "Create Account"
+              )}
+            </button>
+          </form>
+
+          {/* Sign In Link */}
+          <div className="mt-8 text-center">
+            <p className="text-sm text-gray-600">
+              Already have an account?{" "}
+              <Link
+                to="/signin"
+                className="font-medium text-blue-600 hover:text-blue-800 transition-colors"
+              >
+                Sign in
+              </Link>
+            </p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Error Modal */}
+      <AnimatePresence>
+        {showModal && (
+          <motion.div
+            variants={fadeIn}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="fixed inset-0 z-50 overflow-y-auto bg-black/50 backdrop-blur-sm flex items-center justify-center"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.2 }}
+              className="bg-white rounded-lg max-w-md w-full mx-4 overflow-hidden shadow-xl"
+            >
+              <div className="p-4 sm:p-6">
+                <div className="flex items-start mb-4">
+                  <div className="flex-shrink-0">
+                    <AlertCircle className="h-6 w-6 text-red-500" />
+                  </div>
+                  <div className="ml-3 w-0 flex-1 pt-0.5">
+                    <h3 className="text-lg font-medium text-gray-900">Error</h3>
+                    <p className="mt-1 text-sm text-gray-600">{errorMessage}</p>
+                  </div>
+                  <div className="ml-4 flex-shrink-0 flex">
+                    <button
+                      type="button"
+                      className="bg-white rounded-md inline-flex text-gray-400 hover:text-gray-500"
+                      onClick={() => setShowModal(false)}
+                    >
+                      <span className="sr-only">Close</span>
+                      <X className="h-5 w-5" />
+                    </button>
+                  </div>
+                </div>
+                <div className="mt-4 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => setShowModal(false)}
+                    className="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  >
+                    Got it
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* OTP Verification Modal */}
+      <AnimatePresence>
+        {verificationModal && (
+          <motion.div
+            variants={fadeIn}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="fixed inset-0 z-50 overflow-y-auto bg-black/50 backdrop-blur-sm flex items-center justify-center"
+          >
+            <motion.div
+              key={step}
+              initial={{ opacity: 0, y: 20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -20, scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+              className="bg-white rounded-xl max-w-md w-full mx-4 overflow-hidden shadow-xl"
+            >
+              {/* Modal Header */}
+              <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                <h3 className="text-lg font-medium text-gray-900">
+                  {step === 1 ? "Verify Your Email" : "Success"}
+                </h3>
+                <button
+                  type="button"
+                  className="rounded-full p-1 hover:bg-gray-100 transition-colors"
+                  onClick={() => setVerificationModal(false)}
+                >
+                  <X size={20} className="text-gray-500" />
+                </button>
+              </div>
+
+              {/* OTP Verification - Step 1 */}
+              {step === 1 && (
+                <div className="p-6">
+                  <p className="mb-4 text-gray-600">
+                    We've sent a verification code to your email. Please enter
+                    the code below to verify your account.
+                  </p>
+                  <div className="mb-6">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Verification Code
+                    </label>
+                    <div className="flex justify-center space-x-2">
+                      {otp.map((value, index) => (
+                        <input
+                          key={index}
+                          ref={(input) => (inputRefs.current[index] = input)}
+                          type="text"
+                          value={value}
+                          onChange={(e) => handleOtpChange(index, e)}
+                          onClick={() => handleClick(index)}
+                          onKeyDown={(e) => handleKeyDown(index, e)}
+                          className="w-12 h-14 text-center text-xl font-semibold border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                          maxLength={1}
+                        />
+                      ))}
+                    </div>
+                    {modalMessage && (
+                      <p className="mt-2 text-sm text-center text-red-600">
+                        {modalMessage}
+                      </p>
+                    )}
+                    <div className="text-center mt-4">
+                      <button
+                        type="button"
+                        onClick={handleResendOTP}
+                        className="text-sm font-medium text-blue-600 hover:text-blue-800"
+                      >
+                        Didn't receive a code? Resend
+                      </button>
+                    </div>
+                  </div>
+                  <div className="mt-5">
+                    <button
+                      type="button"
+                      onClick={handleVerifyOTP}
+                      className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    >
+                      Verify Code
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Success - Step 2 */}
+              {step === 2 && (
+                <div className="p-6 text-center">
+                  <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
+                    <CheckCircle2 className="h-10 w-10 text-green-600" />
+                  </div>
+                  <h3 className="text-xl font-medium text-gray-900 mb-2">
+                    Account Created Successfully
+                  </h3>
+                  <p className="text-gray-600 mb-6">
+                    Your account has been successfully created and verified. You
+                    can now sign in to access your account.
+                  </p>
+                  <div className="mt-6">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setVerificationModal(false);
+                        setTimeout(() => {
+                          navigate("/signin");
+                        }, 1000);
+                      }}
+                      className="inline-flex justify-center w-full py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    >
+                      Sign In Now
+                    </button>
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
 };
 
 export default SignUp;

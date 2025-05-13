@@ -19,7 +19,7 @@ const UserData = () => {  // Declare the UserData functional component
 
         {/* Introduction paragraph explaining the privacy and data deletion policy */}
         <div>
-            At <Link to='/' className='text-[#48aadf]'>Velora</Link>, we respect your privacy and are committed to ensuring that your personal data is handled securely. In compliance with global privacy regulations, you have the right to request the deletion of your personal data.
+            At <Link to='/' className='text-[#48aadf]'>ipreferstay</Link>, we respect your privacy and are committed to ensuring that your personal data is handled securely. In compliance with global privacy regulations, you have the right to request the deletion of your personal data.
         </div>
 
         {/* Section explaining the steps to delete user data */}
@@ -32,7 +32,7 @@ const UserData = () => {  // Declare the UserData functional component
             <ul className='list-disc pl-8'>  
                 {/* Step 1: Request Deletion */}
                 <li>
-                    Request Deletion: Send an email to <Link className='text-[#48aadf]'>velora@info.com</Link> with the subject line "Data Deletion Request". Please include your full name and the email address associated with your account in the body of the email.
+                    Request Deletion: Send an email to <Link className='text-[#48aadf]'>ipreferstay@info.com</Link> with the subject line "Data Deletion Request". Please include your full name and the email address associated with your account in the body of the email.
                 </li>
     
                 {/* Step 2: Processing the request */}
@@ -52,7 +52,7 @@ const UserData = () => {  // Declare the UserData functional component
             </ul>
 
             {/* Contact information for further inquiries */}
-            For any additional questions or concerns, feel free to contact us at <Link className='text-[#48aadf]'>velora@info.com</Link>.
+            For any additional questions or concerns, feel free to contact us at <Link className='text-[#48aadf]'>ipreferstay@info.com</Link>.
         </div>
     </motion.div>
   )

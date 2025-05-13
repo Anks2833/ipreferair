@@ -28,12 +28,12 @@ const Policy = () => {
             <div className='font-medium'>Introduction</div>
             <div className='font-serif'>
                 {/* Text explaining the website's commitment to privacy and the link to the website */}
-                At Velora, we value your privacy and are committed to protecting your personal data. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website {" "}
+                At ipreferstay, we value your privacy and are committed to protecting your personal data. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website {" "}
                 <Link 
                     to='/' 
                     className='text-[#48aadf]' // Custom styling for the link
                 >
-                    Velora.com
+                    ipreferstay.com
                 </Link>
                 , use our services, and make purchases from our ecommerce store. We comply with the General Data Protection Regulation (GDPR), California Online Privacy Protection Act (CalOPPA), and other applicable laws.
             </div>
@@ -99,7 +99,7 @@ const Policy = () => {
                     <li>Right to Withdraw Consent: You can withdraw your consent for data processing at any time.</li> 
                 </ul>
                 {/* Contact information for exercising these rights */}
-                To exercise any of these rights, please contact us at <span className='text-[#48aadf]'>velora@info.com</span>.
+                To exercise any of these rights, please contact us at <span className='text-[#48aadf]'>ipreferstay@info.com</span>.
             </div>
         </div>
 
@@ -171,7 +171,7 @@ const Policy = () => {
             <div className='font-medium'>Children's Privacy (CalOPPA Compliance)</div>
             <div className='font-serif'>
                 {/* Information on children's data collection */}
-                We do not knowingly collect personal data from children under 13. If we become aware that we have inadvertently collected such information, we will take steps to delete it as soon as possible. If you are a parent or guardian and believe we have collected data from a child, please contact us at <Link className='text-[#48aadf]'>velora@info.com</Link>.
+                We do not knowingly collect personal data from children under 13. If we become aware that we have inadvertently collected such information, we will take steps to delete it as soon as possible. If you are a parent or guardian and believe we have collected data from a child, please contact us at <Link className='text-[#48aadf]'>ipreferstay@info.com</Link>.
             </div>
         </div>
         
@@ -208,7 +208,7 @@ const Policy = () => {
             <div className='font-serif flex flex-col gap-2'>
                 If you have any questions or concerns about this Privacy Policy or your personal data, please contact us at:
                 <ul className='list-disc px-8'>
-                    <li>Email: <Link className='text-[#48aadf]'>velora@info.com</Link></li>
+                    <li>Email: <Link className='text-[#48aadf]'>ipreferstay@info.com</Link></li>
                     <li>Phone: <Link className='text-[#48aadf]'>+90 783 678 08</Link></li>
                     <li>Address: 1A Abraham Street, Mary Land Road, Mary Land, Nigeria</li>
                 </ul>

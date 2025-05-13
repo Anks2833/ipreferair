@@ -1,9 +1,9 @@
 import { HashRouter as Router, useLocation } from 'react-router-dom';
-import AnimatedRoutes from './Components/AnimatedRoutes';
-import Navbar from './Components/Navbar';
-import Footer from './Components/Footer';
-import Help from './Components/Help';
-import ScrollToTop from './Components/ScrollToTop';
+import AnimatedRoutes from './components/AnimatedRoutes';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import Help from './components/Help';
+import ScrollToTop from './components/ScrollToTop';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 const App = () => {
@@ -26,7 +26,7 @@ const App = () => {
 
 			{/* Render Footer only when it's visible */}
 			{isNavbarVisible && <Footer />}
-			<ReactQueryDevtools initialIsOpen={false} />
+			{/* <ReactQueryDevtools initialIsOpen={false} /> */}
 		</>
 	);
 };

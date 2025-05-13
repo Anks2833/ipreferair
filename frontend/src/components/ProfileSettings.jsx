@@ -215,12 +215,12 @@ const ProfileSettings = () => {
                     className='hover:underline text-[#1158a6] text-sm cursor-pointer w-fit'
                     onClick={() => {
                         setDeleteAccountModal(!deleteAccountModal); // Toggles account deletion modal.
-                        setModalMessage('Your data will be permanently deleted from Velora'); // Sets a warning message.
+                        setModalMessage('Your data will be permanently deleted from ipreferstay'); // Sets a warning message.
                     }}
                 >
                     Delete account
                 </p>
-                <p className='text-sm'>Permanently delete your Velora account and data.</p>
+                <p className='text-sm'>Permanently delete your ipreferstay account and data.</p>
             </div>
         </div>
 

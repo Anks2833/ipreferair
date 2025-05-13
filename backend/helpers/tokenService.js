@@ -9,8 +9,8 @@ export const getAmadeusToken = async () => {
             'https://test.api.amadeus.com/v1/security/oauth2/token', // API URL for token generation
             new URLSearchParams({
                 grant_type: 'client_credentials', // OAuth2 grant type
-                client_id: "wd3uSvevhviuKqOpBZbLDIf1X72i3vgJ", // Client ID provided by Amadeus
-                client_secret: "39VoMuSeSPFSJ2id", // Client secret provided by Amadeus
+                client_id: "TKfAXYrz4VdtZMO1mhXySJ6lIusF7z5M", // Client ID provided by Amadeus
+                client_secret: "VvXmoATfjIcBHTYV", // Client secret provided by Amadeus
             }),
             {
                 // Setting headers for the request
