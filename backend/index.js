@@ -36,8 +36,8 @@ const corsOptions = {
       "http://localhost:5173",
       "http://localhost:3000",
       "https://ipreferstay.onrender.com",
-      "https://ipreferair-9wfs.vercel.app/",
-      "https://ipreferair-five.vercel.app/",
+      "https://ipreferair-9wfs.vercel.app",
+      "https://ipreferair-five.vercel.app",
       // Add any other origins you need
     ];
 
