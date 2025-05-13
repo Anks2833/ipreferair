@@ -27,10 +27,32 @@ const app = express();
 
 // Configure CORS options
 const corsOptions = {
-  origin: "*", // Allow requests from CLIENT_URL or all origins if not specified
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps, curl requests)
+    if (!origin) return callback(null, true);
+
+    // Define allowed origins
+    const allowedOrigins = [
+      "http://localhost:5173",
+      "http://localhost:3000",
+      "https://ipreferstay.onrender.com",
+      "https://ipreferair-9wfs.vercel.app/",
+      // Add any other origins you need
+    ];
+
+    // Check if the origin is allowed
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true, // Allow credentials (cookies, authorization headers)
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], // Allowed HTTP methods
-  allowedHeaders: ["Content-Type", "Authorization"], // Allowed request headers
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"], // Allowed request headers
+  exposedHeaders: ["Content-Length", "X-Foo", "X-Bar"],
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
 };
 
 // Middleware setup
