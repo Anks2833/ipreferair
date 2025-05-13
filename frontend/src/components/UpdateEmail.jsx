@@ -37,7 +37,7 @@ const UpdateEmail = () => {
 
 		try {
 			dispatch(updateStart()); // Dispatch update start action
-			const res = await fetch(`/api/user/update/${currentUser._id}`, {
+			const res = await fetch(`https://ipreferstay.onrender.com/api/user/update/${currentUser._id}`, {
 				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json',

@@ -19,7 +19,7 @@ const VerifyUserEmail = () => {
 	const handleResendCode = async () => {
 		try {
 			// Sending a POST request to the server to resend OTP code
-			const response = await fetch('/api/auth/resend-code', {
+			const response = await fetch('https://ipreferstay.onrender.com/api/auth/resend-code', {
 				method: 'POST',
 				body: JSON.stringify({ email: currentUser.email }), // Pass current user's email to resend code
 				headers: { 'Content-Type': 'application/json' }, // Set content type to JSON
@@ -49,7 +49,7 @@ const VerifyUserEmail = () => {
 			setLoading(true); // Set loading to true while verifying OTP
 
 			// Sending POST request to verify the OTP code
-			const res = await fetch('/api/auth/verify-code', {
+			const res = await fetch('https://ipreferstay.onrender.com/api/auth/verify-code', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' }, // Set content type to JSON
 				body: JSON.stringify({ email: currentUser.email, code: otp }), // Send OTP and email to server

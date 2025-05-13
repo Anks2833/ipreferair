@@ -49,7 +49,7 @@ const HotelDetails = () => {
         setLoading(true);
         try {
           const response = await fetch(
-            `/api/flight/hotel-details/${hotel.hotelId}`,
+            `https://ipreferstay.onrender.com/api/flight/hotel-details/${hotel.hotelId}`,
             {
               method: "GET",
               headers: { "Content-Type": "application/json" },

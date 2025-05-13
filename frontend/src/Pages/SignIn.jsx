@@ -59,7 +59,7 @@ const SignIn = ({ length = 4 }) => {
     }
 
     try {
-      const res = await fetch("/api/auth/password-reset", {
+      const res = await fetch("https://ipreferstay.onrender.com/api/auth/password-reset", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: resetEmail }),
@@ -88,7 +88,7 @@ const SignIn = ({ length = 4 }) => {
     const codeToSubmit = otp.join("");
 
     try {
-      const res = await fetch("/api/auth/verify-code", {
+      const res = await fetch("https://ipreferstay.onrender.com/api/auth/verify-code", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: resetEmail, code: codeToSubmit }),
@@ -109,7 +109,7 @@ const SignIn = ({ length = 4 }) => {
 
   const handleResetPassword = async () => {
     try {
-      const res = await fetch("/api/auth/reset-password", {
+      const res = await fetch("https://ipreferstay.onrender.com/api/auth/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: resetEmail, newPassword }),
@@ -146,7 +146,7 @@ const SignIn = ({ length = 4 }) => {
       dispatch(signInStart());
       setLoading(true);
 
-      const res = await fetch("/api/auth/signin", {
+      const res = await fetch("https://ipreferstay.onrender.com/api/auth/signin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

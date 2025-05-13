@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'; // Importing Redux hooks
 import { FaInfoCircle } from 'react-icons/fa'; // Importing InfoCircle icon from react-icons
 import { SyncLoader } from 'react-spinners'; // Importing SyncLoader spinner for loading state
 import { updateFailure, updateStart, updateSuccess } from '../redux/user/userSlice'; // Importing actions for user updates from Redux slice
+import { BackendUrl } from '../App';
 
 const AirportSecurity = () => {
     // Destructuring currentUser from Redux state
@@ -125,7 +126,7 @@ const AirportSecurity = () => {
             // Dispatch Redux action to start updating user
             dispatch(updateStart());
             setLoading(true); // Set loading state to true while waiting for the request
-            const res = await fetch(`/api/user/update/${currentUser._id}`, {
+            const res = await fetch(`https://ipreferstay.onrender.com/api/user/update/${currentUser._id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

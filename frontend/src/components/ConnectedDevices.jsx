@@ -15,7 +15,7 @@ const ConnectedDevices = () => {
 
     const fetchDevices = async () => {
       // Asynchronous function to fetch devices data from the API.
-      const res = await fetch('/api/auth/connected-devices', {
+      const res = await fetch('https://ipreferstay.onrender.com/api/auth/connected-devices', {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` },
       });
       // Sends a GET request to the API endpoint with the authorization token from localStorage.
@@ -34,7 +34,7 @@ const ConnectedDevices = () => {
 
   const handleLogoutDevice = async (token) => {
     // Function to log out a specific device based on its session token.
-    await fetch('/api/auth/logout-device', {
+    await fetch('https://ipreferstay.onrender.com/api/auth/logout-device', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

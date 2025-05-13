@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'; // useDispatch to dispat
 import { SyncLoader } from 'react-spinners'; // Loading spinner component to indicate processing.
 import ScrollToTop from './ScrollToTop'; // Component that scrolls to the top when navigating.
 import { motion } from 'framer-motion' // For animation and motion transitions.
+import { BackendUrl } from '../App';
 
 const BasicDetails = () => {
     const { currentUser } = useSelector((state) => state.user); // Selects the current user from Redux store.
@@ -99,7 +100,7 @@ const BasicDetails = () => {
         try {
           dispatch(updateStart()); // Dispatch the start action for updating user.
           setLoading(true); // Set loading state to true.
-            const res = await fetch(`/api/user/update/${currentUser._id}`, { // Send PUT request to update user data.
+            const res = await fetch(`https://ipreferstay.onrender.com/api/user/update/${currentUser._id}`, { // Send PUT request to update user data.
                 method: 'PUT',
                 headers: {
                 'Content-Type': 'application/json',

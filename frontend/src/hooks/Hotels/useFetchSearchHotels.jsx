@@ -15,7 +15,7 @@ const useFetchSearchHotels = () => {
 		setFetchState('loading');
 		try {
 			const response = await axios.post(
-				'/api/flight/search-hotels',
+				'https://ipreferstay.onrender.com/api/flight/search-hotels',
 				{
 					userId: currentUser._id, // Send user ID from Redux store
 					destination: formData.destination, // IATA code or city name

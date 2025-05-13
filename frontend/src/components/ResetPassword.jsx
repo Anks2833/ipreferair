@@ -83,7 +83,7 @@ const ResetPassword = () => {
 		// Function to handle password reset.
 
 		try {
-			const res = await fetch('/api/auth/reset-password', {
+			const res = await fetch('https://ipreferstay.onrender.com/api/auth/reset-password', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ email: currentUser.email, newPassword }),

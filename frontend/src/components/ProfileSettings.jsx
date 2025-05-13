@@ -36,7 +36,7 @@ const ProfileSettings = () => {
     const handleConfirmEmail = async () => {
         try {
             // Send email confirmation request to the API
-            const res = await fetch('/api/auth/confirm-email', {
+            const res = await fetch('https://ipreferstay.onrender.com/api/auth/confirm-email', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' }, // Set headers for JSON payload
                 body: JSON.stringify({ email: currentUser.email }), // Pass the current user's email
@@ -61,7 +61,7 @@ const ProfileSettings = () => {
     const handleSendConfirmEmail = async () => {
         try {
             // Send the email confirmation request
-            const res = await fetch('/api/auth/confirm-email', {
+            const res = await fetch('https://ipreferstay.onrender.com/api/auth/confirm-email', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' }, // Set headers for JSON payload
                 body: JSON.stringify({ email: currentUser.email }), // Pass the current user's email
@@ -92,7 +92,7 @@ const ProfileSettings = () => {
 
         try {
             dispatch(deleteUserStart()); // Dispatch the start of the deletion process
-            const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+            const res = await fetch(`https://ipreferstay.onrender.com/api/user/delete/${currentUser._id}`, {
                 method: 'DELETE', // Use the DELETE HTTP method
             });
 

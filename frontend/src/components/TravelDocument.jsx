@@ -123,7 +123,7 @@ const TravelDocument = () => {
       setLoading(true); // Set loading state to true
 
       // Send PUT request to update user data
-      const res = await fetch(`/api/user/update/${currentUser._id}`, {
+      const res = await fetch(`https://ipreferstay.onrender.com/api/user/update/${currentUser._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

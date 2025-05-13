@@ -64,7 +64,7 @@ const ProfileSidebar = () => {
         try {
             dispatch(updateStart()); // Indicate the start of an update
             const res = await axios.put(
-                `/api/user/update/${currentUser._id}`, 
+                `https://ipreferstay.onrender.com/api/user/update/${currentUser._id}`, 
                 { profilePicture: imageUrl }, 
                 { headers: { "Content-Type": "application/json" } }
             );

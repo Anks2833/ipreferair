@@ -27,6 +27,7 @@ import { Link, useLocation } from "react-router-dom";
 import { countries } from "../Data/Locations.jsx";
 import { setActiveTab } from "../redux/tab/tabSlice.js";
 import { signOutSuccess } from "../redux/user/userSlice.js";
+import { BackendUrl } from "@/App.jsx";
 
 const Navbar = () => {
   const { currentUser } = useSelector((state) => state.user);
@@ -84,7 +85,7 @@ const Navbar = () => {
   const handleSignOut = async () => {
     try {
       const res = await axios.post(
-        "/api/user/signout",
+        "https://ipreferstay.onrender.com/api/user/signout",
         {},
         {
           headers: { "Content-Type": "application/json" },

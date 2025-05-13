@@ -208,7 +208,7 @@ const HotelCheckOutPage = () => {
 			dispatch(updateStart());
 			setLoading(true);
 
-			const res = await fetch(`/api/user/book-hotel/${currentUser._id}`, {
+			const res = await fetch(`https://ipreferstay.onrender.com/api/user/book-hotel/${currentUser._id}`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',

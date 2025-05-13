@@ -6,6 +6,8 @@ import Help from './components/Help';
 import ScrollToTop from './components/ScrollToTop';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
+export const BackendUrl = "https://ipreferstay.onrender.com";
+
 const App = () => {
 	const location = useLocation();
 

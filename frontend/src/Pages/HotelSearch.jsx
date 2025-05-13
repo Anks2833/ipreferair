@@ -46,7 +46,7 @@ function HotelSearch() {
 	// TanStack Query mutation for hotel search
 	const searchHotelsMutation = useMutation({
 		mutationFn: async (payload) => {
-			const response = await axios.post('/api/flight/search-hotels', payload);
+			const response = await axios.post('https://ipreferstay.onrender.com/api/flight/search-hotels', payload);
 			return response.data;
 		},
 		onMutate: () => setError(null),

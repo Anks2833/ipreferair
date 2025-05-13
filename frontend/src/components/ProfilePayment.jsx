@@ -23,7 +23,7 @@ const ProfilePayment = () => {
         const fetchConnectedAccounts = async () => {
             try {
                 // Making an API call to get connected accounts
-                const response = await axios.get('/api/auth/connected-accounts', {
+                const response = await axios.get("https://ipreferstay.onrender.com/api/auth/connected-accounts", {
                     withCredentials: true, // Include credentials for authentication
                 });
                 console.log("Connected Accounts Response:", response.data); // Log API response

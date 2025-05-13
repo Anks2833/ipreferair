@@ -28,7 +28,7 @@ const OAuth = ({ label }) => {
       const resultsFromGoogle = await signInWithPopup(auth, provider);
 
       // If sign-in is successful, make an Axios POST request to your backend
-      const res = await axios.post('/api/auth/google', {
+      const res = await axios.post('https://ipreferstay.onrender.com/api/auth/google', {
         name: resultsFromGoogle.user.displayName, // Send user display name to the backend
         email: resultsFromGoogle.user.email, // Send user email to the backend
         googlePhotoUrl: resultsFromGoogle.user.photoURL, // Send user's Google profile picture URL to the backend

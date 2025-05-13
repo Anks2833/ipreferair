@@ -82,7 +82,7 @@ const Preferences = () => {
             setLoading(true); // Set loading state to true while awaiting the response
 
             // Making an API call to update user data
-            const res = await fetch(`/api/user/update/${currentUser._id}`, {
+            const res = await fetch(`https://ipreferstay.onrender.com/api/user/update/${currentUser._id}`, {
                 method: 'PUT', // PUT request to update the user's preferences
                 headers: {
                     'Content-Type': 'application/json', // Specify that we're sending JSON data

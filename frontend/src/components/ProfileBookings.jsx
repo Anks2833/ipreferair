@@ -55,7 +55,7 @@ const ProfileBookings = () => {
         try {
             // Make API call to cancel the booking
             const response = await fetch(
-                `/api/user/${currentUser._id}/bookings/${selectedBookingId}`, // API endpoint to cancel the booking
+                `https://ipreferstay.onrender.com/api/user/${currentUser._id}/bookings/${selectedBookingId}`, // API endpoint to cancel the booking
                 { method: "DELETE" } // HTTP DELETE method to remove the booking
             );
 

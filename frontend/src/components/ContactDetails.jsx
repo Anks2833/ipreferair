@@ -7,6 +7,7 @@ import { SyncLoader } from 'react-spinners'; // Loader for indicating async oper
 import { countries } from '../Data/Locations.jsx'; // Importing a list of countries for selection
 import ScrollToTop from './ScrollToTop'; // Component to scroll to the top of the page on navigation
 import { motion } from 'framer-motion'; // For animations in UI components
+import { BackendUrl } from '../App';
 
 // Main functional component
 const ContactDetails = () => {
@@ -95,7 +96,7 @@ const ContactDetails = () => {
         try {
             dispatch(updateStart()); // Dispatch start of update action
             setLoading(true); // Show loading spinner
-            const res = await fetch(`/api/user/update/${currentUser._id}`, {
+            const res = await fetch(`https://ipreferstay.onrender.com/api/user/update/${currentUser._id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

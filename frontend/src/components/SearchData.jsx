@@ -24,7 +24,7 @@ const SearchData = () => {
     const fetchSearchData = async () => {
       try {
         // Making GET request to fetch search data for the current user
-        const response = await axios.get(`/api/flight/search-data/${currentUser._id}`);
+        const response = await axios.get(`https://ipreferstay.onrender.com/api/flight/search-data/${currentUser._id}`);
         setSearchData(response.data); // Set the fetched data to state
       } catch (err) {
         // Handle errors and set the error state
@@ -54,7 +54,7 @@ const SearchData = () => {
   const handleDelete = async (id) => {
     try {
       // Sending DELETE request to remove the search data from the server
-      await axios.delete(`/api/flight/search-data/${id}`);
+      await axios.delete(`https://ipreferstay.onrender.com/api/flight/search-data/${id}`);
       // Remove the deleted item from the state
       setSearchData((prevData) => prevData.filter((item) => item._id !== id));
     } catch (error) {

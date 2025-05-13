@@ -109,7 +109,7 @@ const SignUp = ({ length = 4 }) => {
       setLoading(true);
       setErrorMessage(null);
 
-      const res = await fetch("/api/auth/signup", {
+      const res = await fetch("https://ipreferstay.onrender.com/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -144,7 +144,7 @@ const SignUp = ({ length = 4 }) => {
     }
 
     try {
-      const res = await fetch("/api/auth/verify-otp", {
+      const res = await fetch("https://ipreferstay.onrender.com/api/auth/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email, code: otpString }),
@@ -166,7 +166,7 @@ const SignUp = ({ length = 4 }) => {
 
   const handleResendOTP = async () => {
     try {
-      const res = await fetch("/api/auth/resend-otp", {
+      const res = await fetch("https://ipreferstay.onrender.com/api/auth/resend-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

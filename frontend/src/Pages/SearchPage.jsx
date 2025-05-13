@@ -120,7 +120,7 @@ function SearchPage() {
         adults: parseInt(formData.adults, 10),
       };
 
-      const response = await fetch("/api/flight/search-flights", {
+      const response = await fetch("https://ipreferstay.onrender.com/api/flight/search-flights", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
