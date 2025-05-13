@@ -382,30 +382,29 @@ const Navbar = () => {
           </button>
 
           {/* Links */}
-          <Link
+          {/* <Link
             to="/property"
             className="px-3 py-2 rounded-full text-gray-700 hover:bg-gray-100 transition-colors duration-200 text-sm"
           >
             List your property
-          </Link>
+          </Link> */}
 
-          <Link
+          {/* <Link
             to="/trips"
             className="px-3 py-2 rounded-full text-gray-700 hover:bg-gray-100 transition-colors duration-200 text-sm"
           >
             Trips
-          </Link>
+          </Link> */}
 
-          <Link
+          {/* <Link
             to="/notifications"
             className="p-2 rounded-full text-gray-700 hover:bg-gray-100 transition-colors duration-200 relative"
           >
             <Bell size={20} />
-            {/* Notification badge */}
             <span className="absolute top-0 right-0 h-4 w-4 bg-red-500 rounded-full flex items-center justify-center text-white text-xs">
               2
             </span>
-          </Link>
+          </Link> */}
 
           {/* Profile Section */}
           {currentUser ? (

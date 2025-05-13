@@ -7,7 +7,7 @@ import {
 } from "../redux/user/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
   Eye,
@@ -322,13 +322,12 @@ const SignIn = ({ length = 4 }) => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-gray-50 py-16 px-4 flex items-center justify-center relative">
       {/* Back Button */}
-      <button
+      <NavLink
         className="absolute left-4 top-4 sm:left-8 sm:top-8 flex items-center justify-center w-10 h-10 rounded-full bg-white shadow-sm hover:bg-blue-50 transition-colors"
-        onClick={return_to_previous_page}
-        aria-label="Go back"
+        to="/"
       >
         <ArrowLeft size={20} className="text-blue-600" />
-      </button>
+      </NavLink>
 
       {/* Main Container */}
       <motion.div
